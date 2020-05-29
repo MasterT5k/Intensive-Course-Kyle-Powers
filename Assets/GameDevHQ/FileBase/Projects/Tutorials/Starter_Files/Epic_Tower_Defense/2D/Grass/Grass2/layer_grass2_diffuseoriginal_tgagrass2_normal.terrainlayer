@@ -6,7 +6,7 @@ TerrainLayer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: layer_grass2_diffuseoriginal_tgagrass2_normal(2.000,2.000)(0.000,0.000)(0.000,0.000,0.000),0.720,0.000
+  m_Name: layer_grass2_diffuseoriginal_tgagrass2_normal
   m_DiffuseTexture: {fileID: 2800000, guid: d03385b6971494e48950a0fe08060471, type: 3}
   m_NormalMapTexture: {fileID: 2800000, guid: f99b8caa92aa9442f8d94292707d4a6c, type: 3}
   m_MaskMapTexture: {fileID: 0}
