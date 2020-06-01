@@ -1981,7 +1981,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1.5
-  health: 0
+  StartingHealth: 1
+  currentHealth: 0
   currencyValue: 0
 --- !u!1 &1591344694891335899
 GameObject:
