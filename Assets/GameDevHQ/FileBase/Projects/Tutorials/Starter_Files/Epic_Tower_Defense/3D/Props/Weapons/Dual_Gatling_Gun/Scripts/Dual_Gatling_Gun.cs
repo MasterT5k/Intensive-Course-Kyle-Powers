@@ -22,13 +22,13 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
     public class Dual_Gatling_Gun : MonoBehaviour
     {
         [SerializeField]
-        private Transform[] _gunBarrel = null; //Reference to hold the gun barrel
+        private Transform[] _gunBarrel; //Reference to hold the gun barrel
         [SerializeField]
-        private GameObject[] _muzzleFlash = null; //reference to the muzzle flash effect to play when firing
+        private GameObject[] _muzzleFlash; //reference to the muzzle flash effect to play when firing
         [SerializeField]
-        private ParticleSystem[] _bulletCasings = null; //reference to the bullet casing effect to play when firing
+        private ParticleSystem[] _bulletCasings; //reference to the bullet casing effect to play when firing
         [SerializeField]
-        private AudioClip _fireSound = null; //Reference to the audio clip
+        private AudioClip _fireSound; //Reference to the audio clip
 
         private AudioSource _audioSource; //reference to the audio source component
         private bool _startWeaponNoise = true;

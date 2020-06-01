@@ -9,7 +9,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher.Missle
     public class Missle : MonoBehaviour
     {
         [SerializeField]
-        private ParticleSystem _particle = null; //reference to the particle system
+        private ParticleSystem _particle; //reference to the particle system
 
         [SerializeField]
         private float _launchSpeed; //launch speed of the rocket
