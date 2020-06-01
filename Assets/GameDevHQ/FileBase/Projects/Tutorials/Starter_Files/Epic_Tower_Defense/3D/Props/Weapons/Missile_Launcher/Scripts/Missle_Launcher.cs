@@ -1,26 +1,24 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using GameDevHQ.FileBase.Missle_Launcher.Missle;
 
 namespace GameDevHQ.FileBase.Missle_Launcher
 {
     public class Missle_Launcher : MonoBehaviour
     {
         [SerializeField]
-        private GameObject _missilePrefab; //holds the missle gameobject to clone
+        private GameObject _missilePrefab = null; //holds the missle gameobject to clone
         [SerializeField]
-        private GameObject[] _misslePositions; //array to hold the rocket positions on the turret
+        private GameObject[] _misslePositions = null; //array to hold the rocket positions on the turret
         [SerializeField]
-        private float _fireDelay; //fire delay between rockets
+        private float _fireDelay = 0f; //fire delay between rockets
         [SerializeField]
-        private float _launchSpeed; //initial launch speed of the rocket
+        private float _launchSpeed = 0f; //initial launch speed of the rocket
         [SerializeField]
-        private float _power; //power to apply to the force of the rocket
+        private float _power = 0f; //power to apply to the force of the rocket
         [SerializeField]
-        private float _fuseDelay; //fuse delay before the rocket launches
+        private float _fuseDelay = 0f; //fuse delay before the rocket launches
         [SerializeField]
-        private float _reloadTime; //time in between reloading the rockets
+        private float _reloadTime = 0f; //time in between reloading the rockets
         [SerializeField]
         private float _destroyTime = 10.0f; //how long till the rockets get cleaned up
         private bool _launched; //bool to check if we launched the rockets

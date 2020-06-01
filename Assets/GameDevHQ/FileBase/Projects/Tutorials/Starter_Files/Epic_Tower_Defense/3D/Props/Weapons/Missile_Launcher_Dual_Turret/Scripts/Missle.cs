@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle
@@ -9,7 +8,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle
     public class Missle : MonoBehaviour
     {
         [SerializeField]
-        private ParticleSystem _particle; //reference to the particle system
+        private ParticleSystem _particle = null; //reference to the particle system
 
         [SerializeField]
         private float _launchSpeed; //launch speed of the rocket

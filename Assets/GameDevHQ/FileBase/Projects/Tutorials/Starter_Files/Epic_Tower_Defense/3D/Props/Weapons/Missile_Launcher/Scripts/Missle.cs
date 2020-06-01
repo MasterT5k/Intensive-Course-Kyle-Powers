@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameDevHQ.FileBase.Missle_Launcher.Missle
@@ -9,7 +8,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher.Missle
     public class Missle : MonoBehaviour
     {
         [SerializeField]
-        private ParticleSystem _particle; //reference to the particle system
+        private ParticleSystem _particle = null; //reference to the particle system
 
         [SerializeField]
         private float _launchSpeed; //launch speed of the rocket
@@ -20,7 +19,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher.Missle
 
         private Rigidbody _rigidbody; //reference to the rigidbody of the rocket
         private AudioSource _audioSource; //reference to the audiosource of the rocket
-        
+
         private bool _launched = false; //bool for if the rocket has launched
         private float _initialLaunchTime = 2.0f; //initial launch time for the rocket
         private bool _thrust; //bool to enable the rocket thrusters
@@ -72,7 +71,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher.Missle
                 _thrust = false; //set thrust bool to false
                 _trackRotation = true; //track rotation bool set to true
             }
-             
+
             if (_trackRotation == true) //check track rotation bool
             {
                 _rigidbody.rotation = Quaternion.LookRotation(_rigidbody.velocity); // adjust rotation of rocket based on velocity
