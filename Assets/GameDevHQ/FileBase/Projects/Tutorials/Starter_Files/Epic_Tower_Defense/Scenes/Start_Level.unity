@@ -3385,6 +3385,7 @@ MonoBehaviour:
   _startPoint: {fileID: 1971181768}
   _spawnDelay: 2
   _baseSpawnCount: 10
+  _numberOfWaves: 1
 --- !u!4 &733960750
 Transform:
   m_ObjectHideFlags: 0
@@ -9979,7 +9980,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 3dac35fc7db3c4796b9a8d62cc0fa4a0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 3dac35fc7db3c4796b9a8d62cc0fa4a0, type: 3}
       propertyPath: m_StaticEditorFlags

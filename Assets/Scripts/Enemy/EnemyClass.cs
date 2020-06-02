@@ -7,12 +7,10 @@ public abstract class EnemyClass : MonoBehaviour
     protected float speed = 1.5f;
     [SerializeField]
     protected int StartingHealth = 1;
-    [SerializeField]
     protected int currentHealth;
     [SerializeField]
     protected int currencyValue = 0;
 
-    protected bool reused = false;
     protected NavMeshAgent agent;
     protected Transform endPoint;
     protected float distance = Mathf.Infinity;
@@ -20,12 +18,36 @@ public abstract class EnemyClass : MonoBehaviour
     public virtual void Init()
     {
         agent = GetComponent<NavMeshAgent>();
-        endPoint = GameObject.FindGameObjectWithTag("End Point").transform;
 
         if (agent == null)
         {
             Debug.LogError("Nav Mesh Agent is NULL");
         }
+    }
+
+    public virtual void Awake()
+    {
+        Init();
+    }
+
+    public virtual void Update()
+    {
+        distance = Vector3.Distance(transform.position, endPoint.position);
+
+        if (distance < 2f)
+        {
+            ReachedPathEnd();
+        }
+
+        if (currentHealth < 1)
+        {
+            Destroyed();
+        }
+    }
+
+    public virtual void Activate()
+    {
+        endPoint = GameObject.FindGameObjectWithTag("End Point").transform;
 
         if (endPoint == null)
         {
@@ -36,35 +58,18 @@ public abstract class EnemyClass : MonoBehaviour
         agent.SetDestination(endPoint.position);
     }
 
-    public virtual void Start()
+    public void Destroyed()
     {
-        Init();
-    }
-
-    public virtual void Update()
-    {
-        distance = Vector3.Distance(transform.position, agent.pathEndPosition);
-
-        if (distance < 0.1f)
-        {
-            ReachedPathEnd();
-        }
-
-        if (currentHealth < 1)
-        {
-            gameObject.SetActive(false);
-        }
-    }
-
-    public void Respawn()
-    {
-        currentHealth = StartingHealth;
-        agent.speed = speed;
-        agent.SetDestination(endPoint.position);
+        //UIManager.Instance.AddCurrency(currencyValue); or something
+        distance = Mathf.Infinity;
+        SpawnManager.Instance.Despawn();
+        gameObject.SetActive(false);
     }
 
     public void ReachedPathEnd()
     {
+        distance = Mathf.Infinity;
+        SpawnManager.Instance.Despawn();
         gameObject.SetActive(false);
     }
 }

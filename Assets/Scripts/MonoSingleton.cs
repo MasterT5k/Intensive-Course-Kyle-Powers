@@ -22,8 +22,13 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
         _instance = this as T;
     }
 
+    private void Start()
+    {
+        Init();
+    }
+
     public virtual void Init()
     {
-
+        Debug.Log(typeof(T).ToString() + " has been Initialized");
     }
 }
