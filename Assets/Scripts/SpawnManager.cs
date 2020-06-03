@@ -23,6 +23,12 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     private bool _wavesDone = false;
     private List<GameObject> _enemyPool = new List<GameObject>();
 
+    private void OnEnable()
+    {
+        EnemyClass.OnDisabled += Despawn;
+        EnemyClass.OnGetEndPoint += GetEndPoint;
+    }
+
     private void Start()
     {
         _enemyPool = GenerateEnemies();

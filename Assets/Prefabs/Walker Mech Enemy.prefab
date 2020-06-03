@@ -1904,6 +1904,7 @@ GameObject:
   - component: {fileID: 1675997513731766479}
   - component: {fileID: 7539177420627616955}
   - component: {fileID: 7388220590632160369}
+  - component: {fileID: 204349791207122926}
   m_Layer: 0
   m_Name: Walker Mech Enemy
   m_TagString: Enemy
@@ -1983,6 +1984,19 @@ MonoBehaviour:
   speed: 1.5
   StartingHealth: 1
   currencyValue: 0
+--- !u!65 &204349791207122926
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590880610083368507}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4, y: 9, z: 2.75}
+  m_Center: {x: 0, y: 4.5, z: 0.25}
 --- !u!1 &1591344694891335899
 GameObject:
   m_ObjectHideFlags: 0

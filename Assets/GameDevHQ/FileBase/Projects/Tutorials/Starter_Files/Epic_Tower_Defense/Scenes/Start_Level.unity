@@ -1498,8 +1498,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 5.050152, y: 2.9231224, z: 2.9417336}
-  m_Center: {x: 2.025076, y: 1.1145325, z: 0.17222059}
+  m_Size: {x: 2.9691849, y: 2.9231224, z: 2.9417336}
+  m_Center: {x: 0.98459244, y: 1.1145325, z: 0.17222059}
 --- !u!114 &232098058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3430,7 +3430,7 @@ MonoBehaviour:
   _endPoint: {fileID: 232098055}
   _spawnDelay: 2
   _baseSpawnCount: 10
-  _numberOfWaves: 1
+  _numberOfWaves: 3
 --- !u!4 &733960750
 Transform:
   m_ObjectHideFlags: 0
