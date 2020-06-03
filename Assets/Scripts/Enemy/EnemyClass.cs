@@ -13,7 +13,6 @@ public abstract class EnemyClass : MonoBehaviour
 
     protected NavMeshAgent agent;
     protected Transform endPoint;
-    protected float distance = Mathf.Infinity;
 
     public virtual void Init()
     {
@@ -30,29 +29,19 @@ public abstract class EnemyClass : MonoBehaviour
         Init();
     }
 
+    public virtual void OnEnable()
+    {
+        Activate();
+    }
+
     public virtual void Update()
     {
-        distance = Vector3.Distance(transform.position, endPoint.position);
 
-        if (distance < 2f)
-        {
-            ReachedPathEnd();
-        }
-
-        if (currentHealth < 1)
-        {
-            Destroyed();
-        }
     }
 
     public virtual void Activate()
     {
-        endPoint = GameObject.FindGameObjectWithTag("End Point").transform;
-
-        if (endPoint == null)
-        {
-            Debug.LogError("End Point is NULL");
-        }
+        Transform endPoint = SpawnManager.Instance.GetEndPoint();
         currentHealth = StartingHealth;
         agent.speed = speed;
         agent.SetDestination(endPoint.position);
@@ -61,14 +50,12 @@ public abstract class EnemyClass : MonoBehaviour
     public void Destroyed()
     {
         //UIManager.Instance.AddCurrency(currencyValue); or something
-        distance = Mathf.Infinity;
         SpawnManager.Instance.Despawn();
         gameObject.SetActive(false);
     }
 
     public void ReachedPathEnd()
     {
-        distance = Mathf.Infinity;
         SpawnManager.Instance.Despawn();
         gameObject.SetActive(false);
     }

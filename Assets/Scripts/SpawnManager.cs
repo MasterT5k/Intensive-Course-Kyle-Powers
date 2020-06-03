@@ -11,6 +11,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     [SerializeField]
     private Transform _startPoint = null;
     [SerializeField]
+    private Transform _endPoint = null;
+    [SerializeField]
     private float _spawnDelay = 1f;
     [SerializeField]
     private int _baseSpawnCount = 10;
@@ -71,7 +73,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 _enemyPool.Add(obj);
                 obj.transform.position = _startPoint.position;
                 obj.transform.rotation = _startPoint.rotation;
-                obj.GetComponent<EnemyClass>().Activate();
             }
             else
             {
@@ -79,7 +80,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 obj.transform.position = _startPoint.position;
                 obj.transform.rotation = _startPoint.rotation;
                 obj.SetActive(true);
-                obj.GetComponent<EnemyClass>().Activate();
             }
 
         }
@@ -102,5 +102,10 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             }
             StartCoroutine(SpawnCoroutine());
         }
+    }
+
+    public Transform GetEndPoint()
+    {
+        return _endPoint;
     }
 }

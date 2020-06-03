@@ -20,10 +20,6 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
     private void Awake()
     {
         _instance = this as T;
-    }
-
-    private void Start()
-    {
         Init();
     }
 
