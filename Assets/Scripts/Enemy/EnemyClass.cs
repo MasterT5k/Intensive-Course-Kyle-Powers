@@ -48,11 +48,6 @@ public abstract class EnemyClass : MonoBehaviour
         Activate();
     }
 
-    public virtual void Update()
-    {
-
-    }
-
     public virtual void Activate()
     {
         //Transform endPoint = SpawnManager.Instance.GetEndPoint();
@@ -60,11 +55,15 @@ public abstract class EnemyClass : MonoBehaviour
         if (endPoint == null)
         {
             Debug.LogError("End Point was not retrieved.");
-            endPoint.position = Vector3.zero;
+            currentHealth = StartingHealth;
+            agent.speed = speed;
         }
-        currentHealth = StartingHealth;
-        agent.speed = speed;
-        agent.SetDestination(endPoint.position);
+        else
+        {
+            currentHealth = StartingHealth;
+            agent.speed = speed;
+            agent.SetDestination(endPoint.position);
+        }
     }
 
     public void Destroyed()
