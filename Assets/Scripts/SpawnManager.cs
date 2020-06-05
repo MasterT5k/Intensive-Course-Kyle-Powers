@@ -1,13 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnManager : MonoSingleton<SpawnManager>
 {
-    [SerializeField]
-    private GameObject[] _enemyPrefabs = null;
-    [SerializeField]
-    private GameObject _enemyContainer = null;
     [SerializeField]
     private Transform _startPoint = null;
     [SerializeField]
@@ -19,9 +16,12 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     [SerializeField]
     private int _numberOfWaves = 3;
     private int _currentWave = 1;
+    [SerializeField]
     private int _spawnedEnemies = 0;
     private bool _wavesDone = false;
-    private List<GameObject> _enemyPool = new List<GameObject>();
+    private bool _firstWave = true;
+
+    public static event Func<GameObject> GetEnemy;
 
     private void OnEnable()
     {
@@ -29,26 +29,18 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         EnemyClass.OnGetEndPoint += GetEndPoint;
     }
 
+    private void OnDisable()
+    {
+        EnemyClass.OnDisabled -= Despawn;
+        EnemyClass.OnGetEndPoint -= GetEndPoint;
+    }
+
     private void Start()
     {
-        _enemyPool = GenerateEnemies();
         StartCoroutine(SpawnCoroutine());
     }
 
-    List<GameObject> GenerateEnemies()
-    {
-        int enemiesToCreate = _baseSpawnCount * _numberOfWaves;
-
-        for (int i = 0; i < enemiesToCreate; i++)
-        {
-            int randomEnemy = Random.Range(0, _enemyPrefabs.Length);
-
-            GameObject obj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
-            obj.SetActive(false);
-            _enemyPool.Add(obj);
-        }
-        return _enemyPool;
-    }
+    
 
     private IEnumerator SpawnCoroutine()
     {
@@ -58,38 +50,24 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         {
             _spawnedEnemies++;
 
-            int inactiveEnemy = -1;
-
-            for (int i = 0; i < _enemyPool.Count; i++)
-            {
-                GameObject selectedObj = _enemyPool[i];
-                if (selectedObj.activeInHierarchy == false)
-                {
-                    inactiveEnemy = i;
-                }
-            }
-
             yield return new WaitForSeconds(_spawnDelay);
 
-            if (inactiveEnemy < 0)
-            {
-                int randomEnemy = Random.Range(0, _enemyPrefabs.Length);
+            GameObject obj = GetEnemy?.Invoke();
 
-                GameObject obj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
-                _enemyPool.Add(obj);
-                obj.transform.position = _startPoint.position;
-                obj.transform.rotation = _startPoint.rotation;
-            }
-            else
+            if (obj == null)
             {
-                GameObject obj = _enemyPool[inactiveEnemy];
-                obj.transform.position = _startPoint.position;
-                obj.transform.rotation = _startPoint.rotation;
-                obj.SetActive(true);
+                yield break;
             }
-
+            obj.transform.position = _startPoint.position;
+            obj.transform.rotation = _startPoint.rotation;
+            obj.SetActive(true);
         }
         _currentWave++;
+
+        if (_firstWave == true)
+        {
+            _firstWave = false;
+        }
 
         if (_currentWave > _numberOfWaves)
         {
@@ -99,6 +77,11 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
     public void Despawn()
     {
+        if (_firstWave == true)
+        {
+            return;
+        }
+
         _spawnedEnemies--;
         if (_spawnedEnemies < 1)
         {
@@ -113,5 +96,15 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     public Transform GetEndPoint()
     {
         return _endPoint;
+    }
+
+    public int GetBaseSpawnCount()
+    {
+        return _baseSpawnCount;
+    }
+
+    public int GetNumberOfWaves()
+    {
+        return _numberOfWaves;
     }
 }
