@@ -20,7 +20,6 @@ public class PoolManager : MonoSingleton<PoolManager>
         SpawnManager.GetEnemy -= RequestInactiveEnemy;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         int baseSpawnCount = SpawnManager.Instance.GetBaseSpawnCount();
@@ -28,6 +27,7 @@ public class PoolManager : MonoSingleton<PoolManager>
 
         _enemyPool = GenerateEnemies(baseSpawnCount, numberOfWaves);
     }
+
     List<GameObject> GenerateEnemies(int baseSpawnCount, int numberOfWaves)
     {
         int enemiesToCreate = baseSpawnCount * numberOfWaves;
@@ -62,6 +62,7 @@ public class PoolManager : MonoSingleton<PoolManager>
 
             GameObject obj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
             _enemyPool.Add(obj);
+            Debug.Log("Created new Enemy Prefab.");
             return obj;
         }
         else

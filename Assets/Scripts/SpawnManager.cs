@@ -56,6 +56,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
             if (obj == null)
             {
+                Debug.LogError("Didn't get an Enemy back from Pool Manager.");
                 yield break;
             }
             obj.transform.position = _startPoint.position;
