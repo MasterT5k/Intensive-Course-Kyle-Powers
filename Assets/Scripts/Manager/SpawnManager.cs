@@ -16,7 +16,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     [SerializeField]
     private int _numberOfWaves = 3;
     private int _currentWave = 1;
-    [SerializeField]
     private int _spawnedEnemies = 0;
     private bool _wavesDone = false;
     private bool _firstWave = true;
