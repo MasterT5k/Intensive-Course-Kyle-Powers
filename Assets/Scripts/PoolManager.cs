@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PoolManager : MonoSingleton<PoolManager>
@@ -45,30 +46,20 @@ public class PoolManager : MonoSingleton<PoolManager>
 
     public GameObject RequestInactiveEnemy()
     {
-        int inactiveEnemy = -1;
+        GameObject selectedObj = _enemyPool.FirstOrDefault((enemy) => enemy.activeInHierarchy == false);
 
-        for (int i = 0; i < _enemyPool.Count; i++)
-        {
-            GameObject selectedObj = _enemyPool[i];
-            if (selectedObj != null && selectedObj.activeInHierarchy == false)
-            {
-                inactiveEnemy = i;
-            }
-        }
-
-        if (inactiveEnemy < 0)
+        if (selectedObj == null)
         {
             int randomEnemy = Random.Range(0, _enemyPrefabs.Length);
 
-            GameObject obj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
-            _enemyPool.Add(obj);
+            selectedObj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
+            _enemyPool.Add(selectedObj);
             Debug.Log("Created new Enemy Prefab.");
-            return obj;
+            return selectedObj;
         }
         else
         {
-            GameObject obj = _enemyPool[inactiveEnemy];
-            return obj;
+            return selectedObj;
         }
     }
 }
