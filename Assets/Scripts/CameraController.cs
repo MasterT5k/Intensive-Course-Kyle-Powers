@@ -47,26 +47,33 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        CameraMovement();
+    }
+
+    void CameraMovement()
+    {
         float hInput = Input.GetAxis("Horizontal");
         float vInput = Input.GetAxis("Vertical");
+        float mouseX = Input.mousePosition.x;
+        float mouseY = Input.mousePosition.y;
         float scrollInput = Input.mouseScrollDelta.y;
 
         if (_mousePan == true)
         {
-            if (Input.mousePosition.x < _screenEdgeOffset && hInput == 0)
+            if (mouseX < _screenEdgeOffset && hInput == 0)
             {
                 hInput = -1f;
             }
-            else if (Input.mousePosition.x > (_screenWidth - _screenEdgeOffset) && hInput == 0)
+            else if (mouseX > (_screenWidth - _screenEdgeOffset) && hInput == 0)
             {
                 hInput = 1f;
             }
 
-            if (Input.mousePosition.y < _screenEdgeOffset && vInput == 0)
+            if (mouseY < _screenEdgeOffset && vInput == 0)
             {
                 vInput = -1f;
             }
-            else if (Input.mousePosition.y > (_screenHeight - _screenEdgeOffset) && vInput == 0)
+            else if (mouseY > (_screenHeight - _screenEdgeOffset) && vInput == 0)
             {
                 vInput = 1f;
             }
@@ -89,12 +96,5 @@ public class CameraController : MonoBehaviour
 
             transform.position = newPos;
         }
-
-        CameraMovement();
-    }
-
-    void CameraMovement()
-    {
-
     }
 }
