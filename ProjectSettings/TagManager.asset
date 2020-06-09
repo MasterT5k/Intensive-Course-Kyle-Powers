@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Placement
+  - Attack Range
   layers:
   - Default
   - TransparentFX
