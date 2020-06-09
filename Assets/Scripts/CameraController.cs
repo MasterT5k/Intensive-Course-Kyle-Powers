@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
 {
     [SerializeField]
@@ -19,14 +18,20 @@ public class CameraController : MonoBehaviour
     private float _zLimitMax = 0f;
     [SerializeField]
     private float _zLimitMin = 0f;
+
     private Camera _myCamera;
     [SerializeField]
     private float _zoomOutLimit = 0f;
     [SerializeField]
     private float _zoomInLimit = 0f;
+
+    [SerializeField]
+    private bool _mousePan = false;
+    [SerializeField]
+    private float _screenEdgeOffset = 0f;
     private float _screenWidth;
     private float _screenHeight;
-    // Start is called before the first frame update
+
     void Start()
     {
         if (_startPos == Vector3.zero)
@@ -35,36 +40,48 @@ public class CameraController : MonoBehaviour
         }
         transform.position = _startPos;
         _yPos = transform.position.y;
-        _myCamera = GetComponent<Camera>();
+        _myCamera = Camera.main;
         _screenWidth = Screen.width;
         _screenHeight = Screen.height;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        float hInput = Input.GetAxis("Horizontal");
+        float vInput = Input.GetAxis("Vertical");
         float scrollInput = Input.mouseScrollDelta.y;
 
-        if (scrollInput != 0)
+        if (_mousePan == true)
+        {
+            if (Input.mousePosition.x < _screenEdgeOffset && hInput == 0)
+            {
+                hInput = -1f;
+            }
+            else if (Input.mousePosition.x > (_screenWidth - _screenEdgeOffset) && hInput == 0)
+            {
+                hInput = 1f;
+            }
+
+            if (Input.mousePosition.y < _screenEdgeOffset && vInput == 0)
+            {
+                vInput = -1f;
+            }
+            else if (Input.mousePosition.y > (_screenHeight - _screenEdgeOffset) && vInput == 0)
+            {
+                vInput = 1f;
+            }
+        }
+
+        if (scrollInput != 0f)
         {
             _myCamera.fieldOfView += -scrollInput;
             _myCamera.fieldOfView = Mathf.Clamp(_myCamera.fieldOfView, _zoomInLimit, _zoomOutLimit);
         }
 
-        CameraMovement();
-    }
-
-    void CameraMovement()
-    {
-        float hInput = Input.GetAxis("Horizontal");
-        float vInput = Input.GetAxis("Vertical");
-
-        if (hInput != 0 || vInput != 0)
+        if (hInput != 0f || vInput != 0f)
         {
-            Vector3 direction = new Vector3(hInput, 0, vInput * 2);
+            Vector3 direction = new Vector3(vInput, 0f, -hInput);
             Vector3 velocity = direction * _speed * Time.deltaTime;
-            velocity = transform.TransformDirection(velocity);
-
             Vector3 newPos = transform.position + velocity;
             newPos.y = _yPos;
             newPos.x = Mathf.Clamp(newPos.x, _xLimitMin, _xLimitMax);
@@ -72,5 +89,12 @@ public class CameraController : MonoBehaviour
 
             transform.position = newPos;
         }
+
+        CameraMovement();
+    }
+
+    void CameraMovement()
+    {
+
     }
 }
