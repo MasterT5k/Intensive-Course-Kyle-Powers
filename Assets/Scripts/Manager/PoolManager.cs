@@ -11,6 +11,14 @@ public class PoolManager : MonoSingleton<PoolManager>
     private GameObject _enemyContainer = null;
     private List<GameObject> _enemyPool = new List<GameObject>();
 
+    [SerializeField]
+    private GameObject[] _towerPrefabs = null;
+    [SerializeField]
+    private GameObject _towerContainer = null;
+    [SerializeField]
+    private int _baseNumberOfEachType = 4;
+    private List<GameObject> _towerPool = new List<GameObject>();
+
     private void OnEnable()
     {
         SpawnManager.GetEnemy += RequestInactiveEnemy;
@@ -27,6 +35,7 @@ public class PoolManager : MonoSingleton<PoolManager>
         int numberOfWaves = SpawnManager.Instance.GetNumberOfWaves();
 
         _enemyPool = GenerateEnemies(baseSpawnCount, numberOfWaves);
+        _towerPool = GenerateTowers(_towerPrefabs.Length, _baseNumberOfEachType);
     }
 
     List<GameObject> GenerateEnemies(int baseSpawnCount, int numberOfWaves)
@@ -42,6 +51,22 @@ public class PoolManager : MonoSingleton<PoolManager>
             _enemyPool.Add(obj);
         }
         return _enemyPool;
+    }
+
+    List<GameObject> GenerateTowers(int numberOfTypes, int baseNumber)
+    {
+        int towersToCreate = numberOfTypes * baseNumber;
+
+        for (int i = 0; i < towersToCreate; i++)
+        {
+            for (int n = 0; n < _towerPrefabs.Length; n++)
+            {
+                GameObject obj = Instantiate(_towerPrefabs[n], _towerContainer.transform);
+                obj.SetActive(false);
+                _towerPool.Add(obj);
+            }
+        }
+        return _towerPool;
     }
 
     public GameObject RequestInactiveEnemy()

@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class TowerPlacement : MonoBehaviour
@@ -10,12 +10,14 @@ public class TowerPlacement : MonoBehaviour
     [SerializeField]
     private GameObject[] _towerPrefabs = null;
 
-    //private bool _inTowerPlaceMode = false;
-    private bool _canPlace = false;
+    private bool _inTowerPlaceMode = false;
+    private bool _canPlaceHere = false;
     private int _towerToSpawn = -1;
     private GameObject _currentDecoy;
     private Camera _myCamera;
     private GameObject _rangeIndicator;
+
+    public static event Action<bool> onTowerMode;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,32 @@ public class TowerPlacement : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            _inTowerPlaceMode = true;
+            onTowerMode(_inTowerPlaceMode);
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            _inTowerPlaceMode = false;
+            onTowerMode(_inTowerPlaceMode);
+        }
+
+        if (_inTowerPlaceMode == true)
+        {
+            PlacingTower();
+        }
+        else if (_inTowerPlaceMode == false && _currentDecoy != null)
+        {
+            _currentDecoy.SetActive(false);
+            _currentDecoy = null;
+            _towerToSpawn = -1;
+        }
+    }
+
+    private void PlacingTower()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -66,11 +94,11 @@ public class TowerPlacement : MonoBehaviour
             if (_currentDecoy != null)
             {
                 _currentDecoy.transform.position = hitInfo.point;
-            }            
+            }
 
             if (hitInfo.collider.tag == "Placement")
             {
-                _canPlace = true;
+                _canPlaceHere = true;
 
                 if (_rangeIndicator != null)
                 {
@@ -83,16 +111,17 @@ public class TowerPlacement : MonoBehaviour
             }
             else
             {
-                if (_rangeIndicator != null && _canPlace != false)
+                _canPlaceHere = false;
+
+                if (_rangeIndicator != null)
                 {
                     _rangeIndicator.GetComponent<MeshRenderer>().material.SetColor("_BaseColor", Color.red);
                 }
-                _canPlace = false;
             }
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (_canPlace == true)
+                if (_canPlaceHere == true)
                 {
                     switch (_towerToSpawn)
                     {
@@ -105,7 +134,7 @@ public class TowerPlacement : MonoBehaviour
                         default:
                             Debug.Log("Select a Tower to place.");
                             break;
-                    }                    
+                    }
                 }
                 else
                 {
