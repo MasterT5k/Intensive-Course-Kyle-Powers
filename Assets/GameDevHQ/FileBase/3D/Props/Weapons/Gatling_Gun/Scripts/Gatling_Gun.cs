@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using GameDevHQ.Tower.ITowerNS;
+using GameDevHQ.Tower.TowerPlacementNS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ITower
+namespace GameDevHQ.Tower.ITowerNS
 {
-    int WarFundValue { get; set; }
-    int TowerID { get; set; }
-    GameObject AttackRange { get; set; }
+    public interface ITower
+    {
+        int WarFundValue { get; set; }
+        int TowerID { get; set; }
+        GameObject AttackRange { get; set; }
 
-    void PlaceMode(bool inPlaceMode);
+        void PlaceMode(bool inPlaceMode);
+    }
 }

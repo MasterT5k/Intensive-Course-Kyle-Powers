@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle;
+using GameDevHQ.Tower.ITowerNS;
+using GameDevHQ.Tower.TowerPlacementNS;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 {
@@ -99,7 +101,14 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 
         public void PlaceMode(bool inPlaceMode)
         {
-            throw new System.NotImplementedException();
+            if (inPlaceMode == true)
+            {
+                AttackRange.SetActive(true);
+            }
+            else
+            {
+                AttackRange.SetActive(false);
+            }
         }
     }
 }

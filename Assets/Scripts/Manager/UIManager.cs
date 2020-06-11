@@ -1,23 +1,28 @@
-﻿using System;
+﻿using GameDevHQ.Other.MonoSingletonNS;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoSingleton<UIManager>
+namespace GameDevHQ.Manager.UIManagerNS
 {
-    [SerializeField]
-    private Text _fundsText = null;
-
-    public static event Action<int> OnTowerButtonClick;
-
-    public void SetWarFundText(int warFunds)
+    public class UIManager : MonoSingleton<UIManager>
     {
-        _fundsText.text = warFunds.ToString();
-    }
+        [SerializeField]
+        private Text _fundsText = null;
 
-    public void TowerButtonClick(int selectedTower)
-    {
-        OnTowerButtonClick?.Invoke(selectedTower);
+        public static event Action<int> OnTowerButtonClick;
+
+        public void SetWarFundText(int warFunds)
+        {
+            _fundsText.text = warFunds.ToString();
+        }
+
+        public void TowerButtonClick(int selectedTower)
+        {
+            OnTowerButtonClick?.Invoke(selectedTower);
+        }
     }
 }
+

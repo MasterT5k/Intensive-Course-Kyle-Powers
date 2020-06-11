@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using GameDevHQ.Tower.ITowerNS;
+using GameDevHQ.Tower.TowerPlacementNS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -105,7 +107,14 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
 
         public void PlaceMode(bool inPlaceMode)
         {
-            throw new System.NotImplementedException();
+            if (inPlaceMode == true)
+            {
+                AttackRange.SetActive(true);
+            }
+            else
+            {
+                AttackRange.SetActive(false);
+            }
         }
     }
 

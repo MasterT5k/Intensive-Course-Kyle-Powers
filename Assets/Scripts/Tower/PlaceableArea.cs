@@ -1,69 +1,74 @@
-﻿using System.Collections;
+﻿using GameDevHQ.Tower.TowerPlacementNS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaceableArea : MonoBehaviour
+namespace GameDevHQ.Tower.PlaceableAreaNS
 {
-    private GameObject _particleObj;
-    private bool _canTakeTower = true;
-
-    private void OnEnable()
+    public class PlaceableArea : MonoBehaviour
     {
-        TowerPlacement.OnSelectTower += PlaceMode;
-        TowerPlacement.OnPlaceTower += ReceiveTower;
-        //TowerPlacement.OnCheckForTower += CheckForTower;
-    }
+        private GameObject _particleObj;
+        private bool _canTakeTower = true;
 
-    private void OnDisable()
-    {
-        TowerPlacement.OnSelectTower -= PlaceMode;
-        TowerPlacement.OnPlaceTower -= ReceiveTower;
-        //TowerPlacement.OnCheckForTower -= CheckForTower;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        _particleObj = transform.GetComponentInChildren<ParticleSystem>(true).gameObject;
-
-        if (_particleObj != null)
+        private void OnEnable()
         {
-            _particleObj.SetActive(false);
+            TowerPlacement.OnSelectTower += PlaceMode;
+            TowerPlacement.OnPlaceTower += ReceiveTower;
+            //TowerPlacement.OnCheckForTower += CheckForTower;
         }
-        else
-        {
-            Debug.LogError("Particle System GameObject is NULL.");
-        }
-    }
 
-    private void PlaceMode(bool inPlaceMode)
-    {
-        if (inPlaceMode == true)
+        private void OnDisable()
         {
-            if (_canTakeTower == false)
+            TowerPlacement.OnSelectTower -= PlaceMode;
+            TowerPlacement.OnPlaceTower -= ReceiveTower;
+            //TowerPlacement.OnCheckForTower -= CheckForTower;
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            _particleObj = transform.GetComponentInChildren<ParticleSystem>(true).gameObject;
+
+            if (_particleObj != null)
             {
-                return;
+                _particleObj.SetActive(false);
             }
-            _particleObj.SetActive(true);
-
+            else
+            {
+                Debug.LogError("Particle System GameObject is NULL.");
+            }
         }
-        else
+
+        private void PlaceMode(bool inPlaceMode)
         {
-            _particleObj.SetActive(false);
-        }
-    }
+            if (inPlaceMode == true)
+            {
+                if (_canTakeTower == false)
+                {
+                    return;
+                }
+                _particleObj.SetActive(true);
 
-    private void ReceiveTower(PlaceableArea placeable)
-    {
-        if (placeable == this)
+            }
+            else
+            {
+                _particleObj.SetActive(false);
+            }
+        }
+
+        private void ReceiveTower(PlaceableArea placeable)
         {
-            _canTakeTower = false;
-            _particleObj.SetActive(false);
+            if (placeable == this)
+            {
+                _canTakeTower = false;
+                _particleObj.SetActive(false);
+            }
         }
-    }
 
-    public bool CheckForTower()
-    {
-        return _canTakeTower;
+        public bool CheckForTower()
+        {
+            return _canTakeTower;
+        }
     }
 }
+

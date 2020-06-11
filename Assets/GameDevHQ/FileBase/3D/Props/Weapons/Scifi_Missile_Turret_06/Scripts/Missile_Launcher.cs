@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameDevHQ.FileBase.Missile_Launcher.Missile;
+using GameDevHQ.Tower.ITowerNS;
+using GameDevHQ.Tower.TowerPlacementNS;
 
 /*
  *@author GameDevHQ 
@@ -101,7 +103,14 @@ namespace GameDevHQ.FileBase.Missile_Launcher
 
         public void PlaceMode(bool inPlaceMode)
         {
-            throw new System.NotImplementedException();
+            if (inPlaceMode == true)
+            {
+                AttackRange.SetActive(true);
+            }
+            else
+            {
+                AttackRange.SetActive(false);
+            }
         }
     }
 }

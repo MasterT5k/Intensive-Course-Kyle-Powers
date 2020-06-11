@@ -1,20 +1,25 @@
-﻿using System.Collections;
+﻿using GameDevHQ.Enemy.EnemyClassNS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]
-public class EndPoint : MonoBehaviour
+namespace GameDevHQ.Other.EndPointNS
 {
-    private void OnTriggerEnter(Collider other)
+    [RequireComponent(typeof(Collider))]
+    [RequireComponent(typeof(Rigidbody))]
+    public class EndPoint : MonoBehaviour
     {
-        if (other.tag == "Enemy")
+        private void OnTriggerEnter(Collider other)
         {
-            EnemyClass enemy = other.GetComponent<EnemyClass>();
-            if (enemy != null)
+            if (other.tag == "Enemy")
             {
-                enemy.ReachedPathEnd();
+                EnemyClass enemy = other.GetComponent<EnemyClass>();
+                if (enemy != null)
+                {
+                    enemy.ReachedPathEnd();
+                }
             }
         }
     }
 }
+

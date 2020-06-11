@@ -1,113 +1,119 @@
-﻿using System;
+﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Other.MonoSingletonNS;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : MonoSingleton<SpawnManager>
+namespace GameDevHQ.Manager.SpawnManagerNS
 {
-    [SerializeField]
-    private Transform _startPoint = null;
-    [SerializeField]
-    private Transform _endPoint = null;
-    [SerializeField]
-    private float _spawnDelay = 1f;
-    [SerializeField]
-    private int _baseSpawnCount = 10;
-    [SerializeField]
-    private int _numberOfWaves = 3;
-    private int _currentWave = 1;
-    private int _spawnedEnemies = 0;
-    private bool _wavesDone = false;
-    private bool _firstWave = true;
-
-    public static event Func<GameObject> OnGetEnemy;
-
-    private void OnEnable()
+    public class SpawnManager : MonoSingleton<SpawnManager>
     {
-        EnemyClass.OnDisabled += Despawn;
-        EnemyClass.OnGetEndPoint += GetEndPoint;
-    }
+        [SerializeField]
+        private Transform _startPoint = null;
+        [SerializeField]
+        private Transform _endPoint = null;
+        [SerializeField]
+        private float _spawnDelay = 1f;
+        [SerializeField]
+        private int _baseSpawnCount = 10;
+        [SerializeField]
+        private int _numberOfWaves = 3;
+        private int _currentWave = 1;
+        private int _spawnedEnemies = 0;
+        private bool _wavesDone = false;
+        private bool _firstWave = true;
 
-    private void OnDisable()
-    {
-        EnemyClass.OnDisabled -= Despawn;
-        EnemyClass.OnGetEndPoint -= GetEndPoint;
-    }
+        public static event Func<GameObject> OnGetEnemy;
 
-    private void Start()
-    {
-        StartCoroutine(SpawnCoroutine());
-    }
-
-    
-
-    private IEnumerator SpawnCoroutine()
-    {
-        int amountToSpawn = _baseSpawnCount * _currentWave;
-        
-        while (_spawnedEnemies < amountToSpawn)
+        private void OnEnable()
         {
-            _spawnedEnemies++;
+            EnemyClass.OnDisabled += Despawn;
+            EnemyClass.OnGetEndPoint += GetEndPoint;
+        }
 
-            yield return new WaitForSeconds(_spawnDelay);
+        private void OnDisable()
+        {
+            EnemyClass.OnDisabled -= Despawn;
+            EnemyClass.OnGetEndPoint -= GetEndPoint;
+        }
 
-            GameObject obj = OnGetEnemy?.Invoke();
+        private void Start()
+        {
+            StartCoroutine(SpawnCoroutine());
+        }
 
-            if (obj == null)
+
+
+        private IEnumerator SpawnCoroutine()
+        {
+            int amountToSpawn = _baseSpawnCount * _currentWave;
+
+            while (_spawnedEnemies < amountToSpawn)
             {
-                Debug.LogError("Didn't get an Enemy back from Pool Manager.");
-                yield break;
+                _spawnedEnemies++;
+
+                yield return new WaitForSeconds(_spawnDelay);
+
+                GameObject obj = OnGetEnemy?.Invoke();
+
+                if (obj == null)
+                {
+                    Debug.LogError("Didn't get an Enemy back from Pool Manager.");
+                    yield break;
+                }
+                obj.transform.position = _startPoint.position;
+                obj.transform.rotation = _startPoint.rotation;
+                obj.SetActive(true);
             }
-            obj.transform.position = _startPoint.position;
-            obj.transform.rotation = _startPoint.rotation;
-            obj.SetActive(true);
+
+            _currentWave++;
+
+            if (_firstWave == true)
+            {
+                _firstWave = false;
+            }
+
+            if (_currentWave > _numberOfWaves)
+            {
+                _wavesDone = true;
+            }
         }
 
-        _currentWave++;
-
-        if (_firstWave == true)
+        public void Despawn()
         {
-            _firstWave = false;
-        }
-
-        if (_currentWave > _numberOfWaves)
-        {
-            _wavesDone = true;
-        }
-    }
-
-    public void Despawn()
-    {
-        if (_firstWave == true)
-        {
-            return;
-        }
-
-        _spawnedEnemies--;
-
-        if (_spawnedEnemies < 1)
-        {
-            if (_wavesDone == true)
+            if (_firstWave == true)
             {
                 return;
             }
 
-            StartCoroutine(SpawnCoroutine());
+            _spawnedEnemies--;
+
+            if (_spawnedEnemies < 1)
+            {
+                if (_wavesDone == true)
+                {
+                    return;
+                }
+
+                StartCoroutine(SpawnCoroutine());
+            }
+        }
+
+        public Transform GetEndPoint()
+        {
+            return _endPoint;
+        }
+
+        public int GetBaseSpawnCount()
+        {
+            return _baseSpawnCount;
+        }
+
+        public int GetNumberOfWaves()
+        {
+            return _numberOfWaves;
         }
     }
-
-    public Transform GetEndPoint()
-    {
-        return _endPoint;
-    }
-
-    public int GetBaseSpawnCount()
-    {
-        return _baseSpawnCount;
-    }
-
-    public int GetNumberOfWaves()
-    {
-        return _numberOfWaves;
-    }
 }
+
