@@ -19,7 +19,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
     /// </summary>
 
     [RequireComponent(typeof(AudioSource))] //Require Audio Source component
-    public class Dual_Gatling_Gun : MonoBehaviour
+    public class Dual_Gatling_Gun : MonoBehaviour, ITower
     {
         [SerializeField]
         private Transform[] _gunBarrel = null; //Reference to hold the gun barrel
@@ -33,6 +33,20 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         private AudioSource _audioSource; //reference to the audio source component
         private bool _startWeaponNoise = true;
 
+        public int WarFundValue { get; set; }
+        public int TowerID { get; set; } = 2;
+        public GameObject AttackRange { get; set; }
+
+        private void OnEnable()
+        {
+            TowerPlacement.OnSelectTower += PlaceMode;
+        }
+
+        private void OnDisable()
+        {
+            TowerPlacement.OnSelectTower -= PlaceMode;
+        }
+
         // Use this for initialization
         void Start()
         {
@@ -42,6 +56,11 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
             _audioSource.playOnAwake = false; //disabling play on awake
             _audioSource.loop = true; //making sure our sound effect loops
             _audioSource.clip = _fireSound; //assign the clip to play
+            AttackRange = transform.Find("Attack Range").gameObject;
+            if (AttackRange != null)
+            {
+                AttackRange.SetActive(false);
+            }
         }
 
         // Update is called once per frame
@@ -82,6 +101,11 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         {
             _gunBarrel[0].transform.Rotate(Vector3.forward * Time.deltaTime * -500.0f); //rotate the gun barrel along the "forward" (z) axis at 500 meters per second
             _gunBarrel[1].transform.Rotate(Vector3.forward * Time.deltaTime * -500.0f); //rotate the gun barrel along the "forward" (z) axis at 500 meters per second
+        }
+
+        public void PlaceMode(bool inPlaceMode)
+        {
+            throw new System.NotImplementedException();
         }
     }
 

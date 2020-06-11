@@ -5,16 +5,20 @@ using UnityEngine;
 public class PlaceableArea : MonoBehaviour
 {
     private GameObject _particleObj;
-    private bool _hasTower = false;
+    private bool _canTakeTower = true;
 
     private void OnEnable()
     {
-        TowerPlacement.onTowerMode += PlaceMode;
+        TowerPlacement.OnSelectTower += PlaceMode;
+        TowerPlacement.OnPlaceTower += ReceiveTower;
+        //TowerPlacement.OnCheckForTower += CheckForTower;
     }
 
     private void OnDisable()
     {
-        TowerPlacement.onTowerMode -= PlaceMode;
+        TowerPlacement.OnSelectTower -= PlaceMode;
+        TowerPlacement.OnPlaceTower -= ReceiveTower;
+        //TowerPlacement.OnCheckForTower -= CheckForTower;
     }
 
     // Start is called before the first frame update
@@ -36,7 +40,7 @@ public class PlaceableArea : MonoBehaviour
     {
         if (inPlaceMode == true)
         {
-            if (_hasTower == true)
+            if (_canTakeTower == false)
             {
                 return;
             }
@@ -53,8 +57,13 @@ public class PlaceableArea : MonoBehaviour
     {
         if (placeable == this)
         {
-            _hasTower = true;
+            _canTakeTower = false;
             _particleObj.SetActive(false);
         }
+    }
+
+    public bool CheckForTower()
+    {
+        return _canTakeTower;
     }
 }

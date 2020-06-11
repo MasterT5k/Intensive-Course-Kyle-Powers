@@ -21,12 +21,14 @@ public class PoolManager : MonoSingleton<PoolManager>
 
     private void OnEnable()
     {
-        SpawnManager.GetEnemy += RequestInactiveEnemy;
+        SpawnManager.OnGetEnemy += RequestInactiveEnemy;
+        TowerPlacement.OnRequestTower += RequestInactiveTower;
     }
 
     private void OnDisable()
     {
-        SpawnManager.GetEnemy -= RequestInactiveEnemy;
+        SpawnManager.OnGetEnemy -= RequestInactiveEnemy;
+        TowerPlacement.OnRequestTower -= RequestInactiveTower;
     }
 
     void Start()
@@ -80,6 +82,29 @@ public class PoolManager : MonoSingleton<PoolManager>
             selectedObj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
             _enemyPool.Add(selectedObj);
             Debug.Log("Created new Enemy Prefab.");
+            return selectedObj;
+        }
+        else
+        {
+            return selectedObj;
+        }
+    }
+
+    public GameObject RequestInactiveTower(int towerID)
+    {
+        GameObject selectedObj = _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
+
+        if (selectedObj == null)
+        {
+            foreach (var tower in _towerPrefabs)
+            {
+                if (tower.GetComponent<ITower>().TowerID == towerID)
+                {
+                    selectedObj = Instantiate(tower, _towerContainer.transform);
+                    _towerPool.Add(selectedObj);
+                    Debug.Log("Created new Tower Prefab of Type: " + towerID);
+                }
+            }
             return selectedObj;
         }
         else

@@ -20,7 +20,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     private bool _wavesDone = false;
     private bool _firstWave = true;
 
-    public static event Func<GameObject> GetEnemy;
+    public static event Func<GameObject> OnGetEnemy;
 
     private void OnEnable()
     {
@@ -51,7 +51,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
             yield return new WaitForSeconds(_spawnDelay);
 
-            GameObject obj = GetEnemy?.Invoke();
+            GameObject obj = OnGetEnemy?.Invoke();
 
             if (obj == null)
             {
@@ -62,6 +62,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             obj.transform.rotation = _startPoint.rotation;
             obj.SetActive(true);
         }
+
         _currentWave++;
 
         if (_firstWave == true)
@@ -83,12 +84,14 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         }
 
         _spawnedEnemies--;
+
         if (_spawnedEnemies < 1)
         {
             if (_wavesDone == true)
             {
                 return;
             }
+
             StartCoroutine(SpawnCoroutine());
         }
     }

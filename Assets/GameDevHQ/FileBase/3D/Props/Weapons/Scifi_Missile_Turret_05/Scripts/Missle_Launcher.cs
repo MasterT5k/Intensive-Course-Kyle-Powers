@@ -5,7 +5,7 @@ using GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 {
-    public class Missle_Launcher : MonoBehaviour
+    public class Missle_Launcher : MonoBehaviour, ITower
     {
         [SerializeField]
         private GameObject _missilePrefab = null; //holds the missle gameobject to clone
@@ -26,6 +26,29 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         [SerializeField]
         private float _destroyTime = 10.0f; //how long till the rockets get cleaned up
         private bool _launched; //bool to check if we launched the rockets
+
+        public int WarFundValue { get; set; }
+        public int TowerID { get; set; } = 3;
+        public GameObject AttackRange { get; set; }
+
+        private void OnEnable()
+        {
+            TowerPlacement.OnSelectTower += PlaceMode;
+        }
+
+        private void OnDisable()
+        {
+            TowerPlacement.OnSelectTower -= PlaceMode;
+        }
+
+        private void Start()
+        {
+            AttackRange = transform.Find("Attack Range").gameObject;
+            if (AttackRange != null)
+            {
+                AttackRange.SetActive(false);
+            }
+        }
 
         private void Update()
         {
@@ -72,6 +95,11 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             }
 
             _launched = false; //set launch bool to false
+        }
+
+        public void PlaceMode(bool inPlaceMode)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -10,14 +10,13 @@ using GameDevHQ.FileBase.Missile_Launcher.Missile;
 
 namespace GameDevHQ.FileBase.Missile_Launcher
 {
-    public class Missile_Launcher : MonoBehaviour
+    public class Missile_Launcher : MonoBehaviour, ITower
     {
         public enum MissileType
         {
             Normal,
             Homing
         }
-
 
         [SerializeField]
         private GameObject _missilePrefab = null; //holds the missle gameobject to clone
@@ -40,6 +39,29 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         private bool _launched; //bool to check if we launched the rockets
         [SerializeField]
         private Transform _target = null; //Who should the rocket fire at?
+
+        public int WarFundValue { get; set; } = 500;
+        public int TowerID { get; set; } = 1;
+        public GameObject AttackRange { get; set; }
+
+        private void OnEnable()
+        {
+            TowerPlacement.OnSelectTower += PlaceMode;
+        }
+
+        private void OnDisable()
+        {
+            TowerPlacement.OnSelectTower -= PlaceMode;
+        }
+
+        private void Start()
+        {
+            AttackRange = transform.Find("Attack Range").gameObject;
+            if (AttackRange != null)
+            {
+                AttackRange.SetActive(false);
+            }
+        }
 
         private void Update()
         {
@@ -75,6 +97,11 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             }
 
             _launched = false; //set launch bool to false
+        }
+
+        public void PlaceMode(bool inPlaceMode)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
