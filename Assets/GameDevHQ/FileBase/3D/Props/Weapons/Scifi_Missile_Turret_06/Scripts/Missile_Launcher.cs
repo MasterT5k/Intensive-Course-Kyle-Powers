@@ -59,10 +59,6 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         private void Start()
         {
             AttackRange = transform.Find("Attack Range").gameObject;
-            if (AttackRange != null)
-            {
-                AttackRange.SetActive(false);
-            }
         }
 
         private void Update()

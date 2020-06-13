@@ -1,7 +1,7 @@
 ﻿using GameDevHQ.Manager.SpawnManagerNS;
 using GameDevHQ.Other.MonoSingletonNS;
 using GameDevHQ.Tower.ITowerNS;
-using GameDevHQ.Tower.TowerPlacementNS;
+using GameDevHQ.Tower.PlaceableAreaNS;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,13 +28,13 @@ namespace GameDevHQ.Manager.PoolManagerNS
         private void OnEnable()
         {
             SpawnManager.OnGetEnemy += RequestInactiveEnemy;
-            TowerPlacement.OnRequestTower += RequestInactiveTower;
+            PlaceableArea.OnRequestTower += RequestInactiveTower;
         }
 
         private void OnDisable()
         {
             SpawnManager.OnGetEnemy -= RequestInactiveEnemy;
-            TowerPlacement.OnRequestTower -= RequestInactiveTower;
+            PlaceableArea.OnRequestTower -= RequestInactiveTower;
         }
 
         void Start()

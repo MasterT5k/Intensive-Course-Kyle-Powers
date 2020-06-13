@@ -1,6 +1,4 @@
-﻿using GameDevHQ.Manager.GameManager;
-using GameDevHQ.Manager.UIManagerNS;
-using GameDevHQ.Tower.ITowerNS;
+﻿using GameDevHQ.Manager.UIManagerNS;
 using GameDevHQ.Tower.PlaceableAreaNS;
 using System;
 using System.Collections;
@@ -15,23 +13,24 @@ namespace GameDevHQ.Tower.TowerPlacementNS
         private GameObject[] _decoyObjects = null;
 
         private bool _inTowerPlaceMode = false;
-        private int _selectedTower = -1;
+        private int _selectedTowerID = -1;
         private GameObject _currentDecoy;
         private Camera _myCamera;
         private GameObject _rangeIndicator;
 
         public static event Action<bool> OnSelectTower;
-        public static event Action<PlaceableArea> OnPlaceTower;
-        public static event Func<int, GameObject> OnRequestTower;
-        //public static event Func<bool> OnCheckForTower;
 
         private void OnEnable()
         {
+            PlaceableArea.OnCanPlaceHere += CanPlaceHere;
+            PlaceableArea.OnGetSelectedTowerID += GetSelectedTowerID;
             UIManager.OnTowerButtonClick += TowerButtonClick;
         }
 
         private void OnDisable()
         {
+            PlaceableArea.OnCanPlaceHere -= CanPlaceHere;
+            PlaceableArea.OnGetSelectedTowerID -= GetSelectedTowerID;
             UIManager.OnTowerButtonClick -= TowerButtonClick;
         }
 
@@ -58,11 +57,12 @@ namespace GameDevHQ.Tower.TowerPlacementNS
 
         private void PlacingTower()
         {
-            if (Input.GetMouseButtonDown(1) && _inTowerPlaceMode == true)
+            if (Input.GetMouseButtonDown(1))
             {
                 _currentDecoy.SetActive(false);
                 _currentDecoy = null;
-                _selectedTower = -1;
+                _rangeIndicator = null;
+                _selectedTowerID = -1;
                 _inTowerPlaceMode = false;
                 OnSelectTower(_inTowerPlaceMode);
             }
@@ -76,79 +76,43 @@ namespace GameDevHQ.Tower.TowerPlacementNS
                 {
                     _currentDecoy.transform.position = hitInfo.point;
                 }
+            }
+        }
 
-                bool canPlace;
+        public int GetSelectedTowerID()
+        {
+            return _selectedTowerID;
+        }
 
-                if (hitInfo.collider.tag == "Placement")
+        public void CanPlaceHere(bool canPlace)
+        {
+            if (canPlace == true)
+            {
+                if (_rangeIndicator != null)
                 {
-                    canPlace = hitInfo.collider.GetComponent<PlaceableArea>().CheckForTower();
-
-                    if (_rangeIndicator != null && canPlace == true)
-                    {
-                        _rangeIndicator.GetComponent<MeshRenderer>().material.SetColor("_BaseColor", Color.green);
-                    }
-                    else
-                    {
-                        _rangeIndicator.GetComponent<MeshRenderer>().material.SetColor("_BaseColor", Color.red);
-                    }
+                    _rangeIndicator.GetComponent<MeshRenderer>().material.SetColor("_BaseColor", Color.green);
                 }
-                else
+            }
+            else
+            {
+                if (_rangeIndicator != null)
                 {
-                    canPlace = false;
-
-                    if (_rangeIndicator != null)
-                    {
-                        _rangeIndicator.GetComponent<MeshRenderer>().material.SetColor("_BaseColor", Color.red);
-                    }
-                }
-
-                if (Input.GetMouseButtonDown(0))
-                {
-                    if (canPlace == true)
-                    {
-                        if (_selectedTower < 0)
-                        {
-                            Debug.Log("Select a Tower to place.");
-                            return;
-                        }
-
-                        GameObject towerToPlace;
-                        towerToPlace = OnRequestTower?.Invoke(_selectedTower);
-                        int towerCost = towerToPlace.GetComponent<ITower>().WarFundValue;
-                        bool haveFunds = GameManager.Instance.CheckFunds(towerCost);
-
-                        if (haveFunds)
-                        {
-                            PlaceableArea clickedArea = hitInfo.collider.GetComponent<PlaceableArea>();
-                            OnPlaceTower?.Invoke(clickedArea);
-                            towerToPlace.transform.position = hitInfo.point;
-                            towerToPlace.SetActive(true);
-                            GameManager.Instance.ChangeFunds(towerCost, false);
-                        }
-                        else
-                        {
-                            Debug.Log("Not enough in the War Fund to build Tower.");
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("You can't place that here!");
-                    }
+                    _rangeIndicator.GetComponent<MeshRenderer>().material.SetColor("_BaseColor", Color.red);
                 }
             }
         }
 
-        public void TowerButtonClick(int selectedTower)
+        public void TowerButtonClick(int selectedTowerID)
         {
             if (_currentDecoy != null)
             {
                 _currentDecoy.SetActive(false);
             }
 
-            _currentDecoy = _decoyObjects[selectedTower];
+            _currentDecoy = _decoyObjects[selectedTowerID];
             _currentDecoy.SetActive(true);
             _rangeIndicator = _currentDecoy.transform.Find("Attack Range").gameObject;
-            _selectedTower = selectedTower;
+            _selectedTowerID = selectedTowerID;
             _inTowerPlaceMode = true;
             OnSelectTower?.Invoke(_inTowerPlaceMode);
         }
