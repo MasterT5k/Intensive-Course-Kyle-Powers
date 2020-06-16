@@ -1,4 +1,4 @@
-﻿using GameDevHQ.Tower.ITowerNS;
+﻿using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,22 +31,26 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         private ParticleSystem[] _bulletCasings = null; //reference to the bullet casing effect to play when firing
         [SerializeField]
         private AudioClip _fireSound = null; //Reference to the audio clip
+        [SerializeField]
+        private int _warFundValue = 0;
 
         private AudioSource _audioSource; //reference to the audio source component
         private bool _startWeaponNoise = true;
 
         public int WarFundValue { get; set; }
         public int TowerID { get; set; } = 2;
-        public GameObject AttackRange { get; set; }
+        public MeshRenderer AttackRange { get; set; }
+        public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         private void OnEnable()
         {
-            TowerPlacement.OnSelectTower += PlaceMode;
+            TowerPlacement.onSelectTower += PlaceMode;
         }
 
         private void OnDisable()
         {
-            TowerPlacement.OnSelectTower -= PlaceMode;
+            TowerPlacement.onSelectTower -= PlaceMode;
         }
 
         // Use this for initialization
@@ -58,10 +62,10 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
             _audioSource.playOnAwake = false; //disabling play on awake
             _audioSource.loop = true; //making sure our sound effect loops
             _audioSource.clip = _fireSound; //assign the clip to play
-            AttackRange = transform.Find("Attack Range").gameObject;
+            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             if (AttackRange != null)
             {
-                AttackRange.SetActive(false);
+                AttackRange.enabled = false;
             }
         }
 
@@ -109,12 +113,22 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         {
             if (inPlaceMode == true)
             {
-                AttackRange.SetActive(true);
+                AttackRange.enabled = true;
             }
             else
             {
-                AttackRange.SetActive(false);
+                AttackRange.enabled = false;
             }
+        }
+
+        public void AttackEnemy(GameObject enemy)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void NoEnemiesInRange()
+        {
+            throw new System.NotImplementedException();
         }
     }
 

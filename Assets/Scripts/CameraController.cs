@@ -45,10 +45,17 @@ namespace GameDevHQ.Other.CameraController
             _myCamera = Camera.main;
             _screenWidth = Screen.width;
             _screenHeight = Screen.height;
+
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+
             CameraMovement();
         }
 

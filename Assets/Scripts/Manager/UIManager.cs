@@ -12,7 +12,7 @@ namespace GameDevHQ.Manager.UIManagerNS
         [SerializeField]
         private Text _fundsText = null;
 
-        public static event Action<int> OnTowerButtonClick;
+        public static event Action<int> onTowerButtonClick;
 
         public void SetWarFundText(int warFunds)
         {
@@ -21,7 +21,7 @@ namespace GameDevHQ.Manager.UIManagerNS
 
         public void TowerButtonClick(int selectedTower)
         {
-            OnTowerButtonClick?.Invoke(selectedTower);
+            onTowerButtonClick?.Invoke(selectedTower);
         }
     }
 }

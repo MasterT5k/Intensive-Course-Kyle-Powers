@@ -24,18 +24,18 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         private bool _wavesDone = false;
         private bool _firstWave = true;
 
-        public static event Func<GameObject> OnGetEnemy;
+        public static event Func<GameObject> onGetEnemy;
 
         private void OnEnable()
         {
-            EnemyClass.OnDisabled += Despawn;
-            EnemyClass.OnGetEndPoint += GetEndPoint;
+            EnemyClass.onDisabled += Despawn;
+            EnemyClass.onGetEndPoint += GetEndPoint;
         }
 
         private void OnDisable()
         {
-            EnemyClass.OnDisabled -= Despawn;
-            EnemyClass.OnGetEndPoint -= GetEndPoint;
+            EnemyClass.onDisabled -= Despawn;
+            EnemyClass.onGetEndPoint -= GetEndPoint;
         }
 
         private void Start()
@@ -55,7 +55,7 @@ namespace GameDevHQ.Manager.SpawnManagerNS
 
                 yield return new WaitForSeconds(_spawnDelay);
 
-                GameObject obj = OnGetEnemy?.Invoke();
+                GameObject obj = onGetEnemy?.Invoke();
 
                 if (obj == null)
                 {

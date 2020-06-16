@@ -15,12 +15,12 @@ namespace GameDevHQ.Manager.GameManager
 
         private void OnEnable()
         {
-            EnemyClass.OnDestroyed += EnemyDestroyed;
+            EnemyClass.onDestroyed += EnemyDestroyed;
         }
 
         private void OnDisable()
         {
-            EnemyClass.OnDestroyed -= EnemyDestroyed;
+            EnemyClass.onDestroyed -= EnemyDestroyed;
         }
 
         // Start is called before the first frame update

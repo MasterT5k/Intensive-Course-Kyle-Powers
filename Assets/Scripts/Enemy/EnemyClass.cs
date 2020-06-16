@@ -15,9 +15,9 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         [SerializeField]
         protected int _currencyValue = 0;
 
-        public static event Action<int> OnDestroyed;
-        public static event Action OnDisabled;
-        public static event Func<Transform> OnGetEndPoint;
+        public static event Action<int> onDestroyed;
+        public static event Action onDisabled;
+        public static event Func<Transform> onGetEndPoint;
 
         protected NavMeshAgent _agent;
         protected Transform _endPoint;
@@ -44,14 +44,14 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void OnDisable()
         {
-            OnDisabled?.Invoke();
+            onDisabled?.Invoke();
         }
 
         public virtual void Activate()
         {
             if (_endPoint == null)
             {
-                _endPoint = OnGetEndPoint?.Invoke();
+                _endPoint = onGetEndPoint?.Invoke();
                 Debug.Log("End Point was retrieved.");
                 _currentHealth = _startingHealth;
                 _agent.speed = _speed;
@@ -67,13 +67,23 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public void Destroyed()
         {
-            OnDestroyed?.Invoke(_currencyValue);
+            onDestroyed?.Invoke(_currencyValue);
             gameObject.SetActive(false);
         }
 
         public void ReachedPathEnd()
         {
             gameObject.SetActive(false);
+        }
+
+        public void Damage(int amount)
+        {
+            _currentHealth -= amount;
+
+            if (_currentHealth < 1)
+            {
+
+            }
         }
     }
 }

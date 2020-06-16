@@ -1,5 +1,5 @@
 ﻿using GameDevHQ.Manager.GameManager;
-using GameDevHQ.Tower.ITowerNS;
+using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using System;
 using System.Collections;
@@ -15,18 +15,18 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         private bool _canTakeTower = true;
         private bool _inPlaceMode = false;
 
-        public static event Action<bool> OnCanPlaceHere;
-        public static event Func<int> OnGetSelectedTowerID;
-        public static event Func<int, GameObject> OnRequestTower;
+        public static event Action<bool> onCanPlaceHere;
+        public static event Func<int> onGetSelectedTowerID;
+        public static event Func<int, GameObject> onRequestTower;
 
         private void OnEnable()
         {
-            TowerPlacement.OnSelectTower += PlaceMode;
+            TowerPlacement.onSelectTower += PlaceMode;
         }
 
         private void OnDisable()
         {
-            TowerPlacement.OnSelectTower -= PlaceMode;
+            TowerPlacement.onSelectTower -= PlaceMode;
         }
 
         void Start()
@@ -47,7 +47,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         {
             if (_inPlaceMode == true)
             {
-                OnCanPlaceHere?.Invoke(_canTakeTower);
+                onCanPlaceHere?.Invoke(_canTakeTower);
             }
         }
 
@@ -55,7 +55,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         {
             if (_inPlaceMode == true)
             {
-                OnCanPlaceHere?.Invoke(false);
+                onCanPlaceHere?.Invoke(false);
             }
         }
 
@@ -65,7 +65,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
 
             if (_inPlaceMode == true)
             {
-                selectedTowerID = (int)(OnGetSelectedTowerID?.Invoke());
+                selectedTowerID = (int)(onGetSelectedTowerID?.Invoke());
 
                 if (selectedTowerID < 0)
                 {
@@ -74,7 +74,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
                 }
 
                 GameObject towerToPlace;
-                towerToPlace = OnRequestTower?.Invoke(selectedTowerID);
+                towerToPlace = onRequestTower?.Invoke(selectedTowerID);
                 int towerCost = towerToPlace.GetComponent<ITower>().WarFundValue;
                 bool haveFunds = GameManager.Instance.CheckFunds(towerCost);
 
@@ -85,7 +85,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
                     _placedTower = towerToPlace;
                     _canTakeTower = false;
                     _particleObj.SetActive(false);
-                    OnCanPlaceHere?.Invoke(_canTakeTower);
+                    onCanPlaceHere?.Invoke(_canTakeTower);
                     GameManager.Instance.ChangeFunds(towerCost, false);
                 }
                 else

@@ -18,20 +18,20 @@ namespace GameDevHQ.Tower.TowerPlacementNS
         private Camera _myCamera;
         private GameObject _rangeIndicator;
 
-        public static event Action<bool> OnSelectTower;
+        public static event Action<bool> onSelectTower;
 
         private void OnEnable()
         {
-            PlaceableArea.OnCanPlaceHere += CanPlaceHere;
-            PlaceableArea.OnGetSelectedTowerID += GetSelectedTowerID;
-            UIManager.OnTowerButtonClick += TowerButtonClick;
+            PlaceableArea.onCanPlaceHere += CanPlaceHere;
+            PlaceableArea.onGetSelectedTowerID += GetSelectedTowerID;
+            UIManager.onTowerButtonClick += TowerButtonClick;
         }
 
         private void OnDisable()
         {
-            PlaceableArea.OnCanPlaceHere -= CanPlaceHere;
-            PlaceableArea.OnGetSelectedTowerID -= GetSelectedTowerID;
-            UIManager.OnTowerButtonClick -= TowerButtonClick;
+            PlaceableArea.onCanPlaceHere -= CanPlaceHere;
+            PlaceableArea.onGetSelectedTowerID -= GetSelectedTowerID;
+            UIManager.onTowerButtonClick -= TowerButtonClick;
         }
 
         void Start()
@@ -64,7 +64,7 @@ namespace GameDevHQ.Tower.TowerPlacementNS
                 _rangeIndicator = null;
                 _selectedTowerID = -1;
                 _inTowerPlaceMode = false;
-                OnSelectTower(_inTowerPlaceMode);
+                onSelectTower(_inTowerPlaceMode);
             }
 
             Ray rayOrigin = _myCamera.ScreenPointToRay(Input.mousePosition);
@@ -114,7 +114,7 @@ namespace GameDevHQ.Tower.TowerPlacementNS
             _rangeIndicator = _currentDecoy.transform.Find("Attack Range").gameObject;
             _selectedTowerID = selectedTowerID;
             _inTowerPlaceMode = true;
-            OnSelectTower?.Invoke(_inTowerPlaceMode);
+            onSelectTower?.Invoke(_inTowerPlaceMode);
         }
     }
 }

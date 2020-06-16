@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle;
-using GameDevHQ.Tower.ITowerNS;
+using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
@@ -27,28 +27,33 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         private float _reloadTime = 0f; //time in between reloading the rockets
         [SerializeField]
         private float _destroyTime = 10.0f; //how long till the rockets get cleaned up
+        [SerializeField]
+        private int _warFundValue = 0;
+
         private bool _launched; //bool to check if we launched the rockets
 
         public int WarFundValue { get; set; }
         public int TowerID { get; set; } = 3;
-        public GameObject AttackRange { get; set; }
+        public MeshRenderer AttackRange { get; set; }
+        public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         private void OnEnable()
         {
-            TowerPlacement.OnSelectTower += PlaceMode;
+            TowerPlacement.onSelectTower += PlaceMode;
         }
 
         private void OnDisable()
         {
-            TowerPlacement.OnSelectTower -= PlaceMode;
+            TowerPlacement.onSelectTower -= PlaceMode;
         }
 
         private void Start()
         {
-            AttackRange = transform.Find("Attack Range").gameObject;
+            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             if (AttackRange != null)
             {
-                AttackRange.SetActive(false);
+                AttackRange.enabled = false;
             }
         }
 
@@ -103,12 +108,22 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         {
             if (inPlaceMode == true)
             {
-                AttackRange.SetActive(true);
+                AttackRange.enabled = true;
             }
             else
             {
-                AttackRange.SetActive(false);
+                AttackRange.enabled = false;
             }
+        }
+
+        public void AttackEnemy(GameObject enemy)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void NoEnemiesInRange()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

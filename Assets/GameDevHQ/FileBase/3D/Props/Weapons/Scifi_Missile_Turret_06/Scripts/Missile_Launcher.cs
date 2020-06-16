@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameDevHQ.FileBase.Missile_Launcher.Missile;
-using GameDevHQ.Tower.ITowerNS;
+using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 
 /*
@@ -41,24 +41,32 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         private bool _launched; //bool to check if we launched the rockets
         [SerializeField]
         private Transform _target = null; //Who should the rocket fire at?
+        [SerializeField]
+        private int _warFundValue = 0;
 
         public int WarFundValue { get; set; } = 500;
         public int TowerID { get; set; } = 1;
-        public GameObject AttackRange { get; set; }
+        public MeshRenderer AttackRange { get; set; }
+        public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         private void OnEnable()
         {
-            TowerPlacement.OnSelectTower += PlaceMode;
+            TowerPlacement.onSelectTower += PlaceMode;
         }
 
         private void OnDisable()
         {
-            TowerPlacement.OnSelectTower -= PlaceMode;
+            TowerPlacement.onSelectTower -= PlaceMode;
         }
 
         private void Start()
         {
-            AttackRange = transform.Find("Attack Range").gameObject;
+            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
+            if (AttackRange != null)
+            {
+                AttackRange.enabled = false;
+            }
         }
 
         private void Update()
@@ -101,12 +109,22 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         {
             if (inPlaceMode == true)
             {
-                AttackRange.SetActive(true);
+                AttackRange.enabled = true;
             }
             else
             {
-                AttackRange.SetActive(false);
+                AttackRange.enabled = false;
             }
+        }
+
+        public void AttackEnemy(GameObject enemy)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void NoEnemiesInRange()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
