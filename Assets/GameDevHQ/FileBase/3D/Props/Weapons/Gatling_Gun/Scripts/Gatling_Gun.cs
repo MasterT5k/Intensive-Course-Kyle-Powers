@@ -40,7 +40,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         [SerializeField]
         private Transform _rotationPoint = null;
         [SerializeField]
-        private int _damagePerSecond = 1;
+        private int _damage = 1;
         private float _attackDelay = -1f;
 
         private AudioSource _audioSource; //reference to the audio source component
@@ -52,6 +52,8 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         public GameObject EnemyToTarget { get; set; }
         public bool IsEnemyInRange { get; set; }
         public Transform RotationObj { get; set; }
+        public int Damage { get; set; }
+        public float AttackDelay { get; set; }
 
         private void OnEnable()
         {
@@ -95,10 +97,10 @@ namespace GameDevHQ.FileBase.Gatling_Gun
                     _startWeaponNoise = false; //set the start weapon noise value to false to prevent calling it again
                 }
 
-                if (Time.time > _attackDelay)
+                if (Time.time > AttackDelay)
                 {
-                    _attackDelay = Time.time + 1f;
-                    EnemyToTarget.GetComponent<EnemyClass>().Damage(_damagePerSecond);
+                    AttackDelay = Time.time + 1f;
+                    EnemyToTarget.GetComponent<EnemyClass>().Damage(Damage);
                 }
             }
             else if (IsEnemyInRange == false && _startWeaponNoise == false) 
@@ -121,6 +123,8 @@ namespace GameDevHQ.FileBase.Gatling_Gun
             TowerID = _towerID;
             AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             RotationObj = _rotationPoint;
+            AttackDelay = _attackDelay;
+            Damage = _damage;
         }
 
         public void PlaceMode(bool inPlaceMode)

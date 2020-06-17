@@ -49,6 +49,8 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         [SerializeField]
         private Transform _rotationPoint = null;
 
+        public int Damage { get; set; }
+        public float AttackDelay { get; set; }
         public int WarFundValue { get; set; }
         public int TowerID { get; set; }
         public MeshRenderer AttackRange { get; set; }

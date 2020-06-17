@@ -48,6 +48,8 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public Transform RotationObj { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int Damage { get; set; }
+        public float AttackDelay { get; set; }
 
         private void OnEnable()
         {

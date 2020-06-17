@@ -8,6 +8,8 @@ namespace GameDevHQ.Interface.ITowerNS
     {
         int WarFundValue { get; set; }
         int TowerID { get; set; }
+        int Damage { get; set; }
+        float AttackDelay { get; set; }
         Transform RotationObj { get; set; }
         MeshRenderer AttackRange { get; set; }
         GameObject EnemyToTarget { get; set; }

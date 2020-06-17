@@ -91,6 +91,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             onHealthGone?.Invoke(this.gameObject);
             _agent.isStopped = true;
             _explosionPrefab.SetActive(true);
+            _anim.SetTrigger("Destroyed");
             StartCoroutine(InactiveCoroutine(_deathInactiveDelay));
         }
 
@@ -109,12 +110,10 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             }
         }
 
-        protected IEnumerator InactiveCoroutine(float animationLength)
+        protected IEnumerator InactiveCoroutine(float inactiveDelay)
         {
-            yield return new WaitForSeconds(0.5f);
-            _anim.SetTrigger("Destroyed");
-
-            yield return new WaitForSeconds(animationLength);
+            yield return new WaitForSeconds(inactiveDelay);
+            _explosionPrefab.SetActive(false);
             gameObject.SetActive(false);
         }
     }
