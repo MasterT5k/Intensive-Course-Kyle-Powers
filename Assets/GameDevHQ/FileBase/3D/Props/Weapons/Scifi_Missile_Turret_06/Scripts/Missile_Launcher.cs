@@ -41,14 +41,20 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         private bool _launched; //bool to check if we launched the rockets
         [SerializeField]
         private Transform _target = null; //Who should the rocket fire at?
+
         [SerializeField]
         private int _warFundValue = 0;
+        [SerializeField]
+        private int _towerID = -1;
+        [SerializeField]
+        private Transform _rotationPoint = null;
 
-        public int WarFundValue { get; set; } = 500;
-        public int TowerID { get; set; } = 1;
+        public int WarFundValue { get; set; }
+        public int TowerID { get; set; }
         public MeshRenderer AttackRange { get; set; }
-        public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public GameObject EnemyToTarget { get; set; }
+        public bool IsEnemyInRange { get; set; }
+        public Transform RotationObj { get; set; }
 
         private void OnEnable()
         {
@@ -60,17 +66,18 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             TowerPlacement.onSelectTower -= PlaceMode;
         }
 
-        private void Start()
+        private void Awake()
         {
-            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
-            if (AttackRange != null)
-            {
-                AttackRange.enabled = false;
-            }
+            Init();
         }
 
         private void Update()
         {
+            if (IsEnemyInRange == true)
+            {
+                RotationObj.LookAt(EnemyToTarget.transform, Vector3.up);
+            }
+
             if (Input.GetKeyDown(KeyCode.Space) && _launched == false) //check for space key and if we launched the rockets
             {
                 _launched = true; //set the launch bool to true
@@ -105,6 +112,14 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             _launched = false; //set launch bool to false
         }
 
+        public void Init()
+        {
+            WarFundValue = _warFundValue;
+            TowerID = _towerID;
+            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
+            RotationObj = _rotationPoint;
+        }
+
         public void PlaceMode(bool inPlaceMode)
         {
             if (inPlaceMode == true)
@@ -119,12 +134,14 @@ namespace GameDevHQ.FileBase.Missile_Launcher
 
         public void AttackEnemy(GameObject enemy)
         {
-            throw new System.NotImplementedException();
+            EnemyToTarget = enemy;
+            IsEnemyInRange = true;
         }
 
         public void NoEnemiesInRange()
         {
-            throw new System.NotImplementedException();
+            EnemyToTarget = null;
+            IsEnemyInRange = false;
         }
     }
 }

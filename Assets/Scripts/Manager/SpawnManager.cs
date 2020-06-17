@@ -21,6 +21,7 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         private int _numberOfWaves = 3;
         private int _currentWave = 1;
         private int _spawnedEnemies = 0;
+        private int _activeEnemies = 0;
         private bool _wavesDone = false;
         private bool _firstWave = true;
 
@@ -48,10 +49,12 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         private IEnumerator SpawnCoroutine()
         {
             int amountToSpawn = _baseSpawnCount * _currentWave;
+            _spawnedEnemies = 0;
 
             while (_spawnedEnemies < amountToSpawn)
             {
                 _spawnedEnemies++;
+                _activeEnemies++;
 
                 yield return new WaitForSeconds(_spawnDelay);
 
@@ -87,9 +90,9 @@ namespace GameDevHQ.Manager.SpawnManagerNS
                 return;
             }
 
-            _spawnedEnemies--;
+            _activeEnemies--;
 
-            if (_spawnedEnemies < 1)
+            if (_activeEnemies < 1)
             {
                 if (_wavesDone == true)
                 {

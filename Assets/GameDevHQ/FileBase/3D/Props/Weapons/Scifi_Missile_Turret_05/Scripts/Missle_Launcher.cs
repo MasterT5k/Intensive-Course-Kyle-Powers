@@ -27,16 +27,22 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         private float _reloadTime = 0f; //time in between reloading the rockets
         [SerializeField]
         private float _destroyTime = 10.0f; //how long till the rockets get cleaned up
+
         [SerializeField]
         private int _warFundValue = 0;
+        [SerializeField]
+        private int _towerID = -1;
+        [SerializeField]
+        private Transform _rotationPoint = null;
 
         private bool _launched; //bool to check if we launched the rockets
 
         public int WarFundValue { get; set; }
-        public int TowerID { get; set; } = 3;
+        public int TowerID { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public Transform RotationObj { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         private void OnEnable()
         {
@@ -50,11 +56,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 
         private void Start()
         {
-            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
-            if (AttackRange != null)
-            {
-                AttackRange.enabled = false;
-            }
+            Init();
         }
 
         private void Update()
@@ -102,6 +104,14 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             }
 
             _launched = false; //set launch bool to false
+        }
+
+        public void Init()
+        {
+            WarFundValue = _warFundValue;
+            TowerID = _towerID;
+            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
+            RotationObj = _rotationPoint;
         }
 
         public void PlaceMode(bool inPlaceMode)

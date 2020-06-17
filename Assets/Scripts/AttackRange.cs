@@ -1,4 +1,5 @@
-﻿using GameDevHQ.Interface.ITowerNS;
+﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Interface.ITowerNS;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,9 +8,18 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class AttackRange : MonoBehaviour
 {
-    private ITower _tower;
-    [SerializeField]
     private List<GameObject> _enemysInRange = new List<GameObject>();
+    private ITower _tower;
+
+    private void OnEnable()
+    {
+        EnemyClass.onHealthGone += RemoveEnemy;
+    }
+
+    private void OnDisable()
+    {
+        EnemyClass.onHealthGone -= RemoveEnemy;
+    }
 
     void Start()
     {
@@ -31,15 +41,20 @@ public class AttackRange : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             GameObject enemy = other.gameObject;
-            _enemysInRange.Remove(enemy);
-            if (_enemysInRange.Count > 0)
-            {
-                _tower.AttackEnemy(_enemysInRange[0]);
-            }
-            else
-            {
-                _tower.NoEnemiesInRange();
-            }
+            RemoveEnemy(enemy);
+        }
+    }
+
+    public void RemoveEnemy(GameObject enemy)
+    {
+        _enemysInRange.Remove(enemy);
+        if (_enemysInRange.Count > 0)
+        {
+            _tower.AttackEnemy(_enemysInRange[0]);
+        }
+        else
+        {
+            _tower.NoEnemiesInRange();
         }
     }
 }

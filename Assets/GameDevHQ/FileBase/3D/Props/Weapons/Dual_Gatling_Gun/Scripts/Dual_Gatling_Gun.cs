@@ -31,17 +31,23 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         private ParticleSystem[] _bulletCasings = null; //reference to the bullet casing effect to play when firing
         [SerializeField]
         private AudioClip _fireSound = null; //Reference to the audio clip
+
         [SerializeField]
         private int _warFundValue = 0;
+        [SerializeField]
+        private int _towerID = -1;
+        [SerializeField]
+        private Transform _rotationPoint = null;
 
         private AudioSource _audioSource; //reference to the audio source component
         private bool _startWeaponNoise = true;
 
         public int WarFundValue { get; set; }
-        public int TowerID { get; set; } = 2;
+        public int TowerID { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public Transform RotationObj { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         private void OnEnable()
         {
@@ -62,11 +68,8 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
             _audioSource.playOnAwake = false; //disabling play on awake
             _audioSource.loop = true; //making sure our sound effect loops
             _audioSource.clip = _fireSound; //assign the clip to play
-            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
-            if (AttackRange != null)
-            {
-                AttackRange.enabled = false;
-            }
+
+            Init();
         }
 
         // Update is called once per frame
@@ -107,6 +110,14 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         {
             _gunBarrel[0].transform.Rotate(Vector3.forward * Time.deltaTime * -500.0f); //rotate the gun barrel along the "forward" (z) axis at 500 meters per second
             _gunBarrel[1].transform.Rotate(Vector3.forward * Time.deltaTime * -500.0f); //rotate the gun barrel along the "forward" (z) axis at 500 meters per second
+        }
+
+        public void Init()
+        {
+            WarFundValue = _warFundValue;
+            TowerID = _towerID;
+            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
+            RotationObj = _rotationPoint;
         }
 
         public void PlaceMode(bool inPlaceMode)

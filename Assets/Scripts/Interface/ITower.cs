@@ -8,10 +8,12 @@ namespace GameDevHQ.Interface.ITowerNS
     {
         int WarFundValue { get; set; }
         int TowerID { get; set; }
+        Transform RotationObj { get; set; }
         MeshRenderer AttackRange { get; set; }
         GameObject EnemyToTarget { get; set; }
         bool IsEnemyInRange { get; set; }
 
+        void Init();
         void PlaceMode(bool inPlaceMode);
         void AttackEnemy(GameObject enemy);
         void NoEnemiesInRange();

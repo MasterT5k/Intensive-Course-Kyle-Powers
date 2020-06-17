@@ -1,34 +1,49 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace GameDevHQ.Enemy.EnemyClassNS
 {
     [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(Animator))]
     public abstract class EnemyClass : MonoBehaviour
     {
         [SerializeField]
         protected float _speed = 1.5f;
         [SerializeField]
         protected int _startingHealth = 1;
+        [SerializeField]
         protected int _currentHealth;
         [SerializeField]
         protected int _currencyValue = 0;
+        [SerializeField]
+        protected GameObject _explosionPrefab = null;
+        [SerializeField]
+        protected float _deathInactiveDelay = 5f;
 
         public static event Action<int> onDestroyed;
+        public static event Action<GameObject> onHealthGone;
         public static event Action onDisabled;
         public static event Func<Transform> onGetEndPoint;
 
         protected NavMeshAgent _agent;
+        protected Animator _anim;
         protected Transform _endPoint;
 
         public virtual void Init()
         {
             _agent = GetComponent<NavMeshAgent>();
+            _anim = GetComponent<Animator>();
 
             if (_agent == null)
             {
                 Debug.LogError("Nav Mesh Agent is NULL");
+            }
+
+            if (_anim == null)
+            {
+                Debug.LogError("Animator in NULL");
             }
         }
 
@@ -49,6 +64,11 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void Activate()
         {
+            if (_agent.isStopped == true)
+            {
+                _agent.isStopped = false;
+            }
+
             if (_endPoint == null)
             {
                 _endPoint = onGetEndPoint?.Invoke();
@@ -68,7 +88,10 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         public void Destroyed()
         {
             onDestroyed?.Invoke(_currencyValue);
-            gameObject.SetActive(false);
+            onHealthGone?.Invoke(this.gameObject);
+            _agent.isStopped = true;
+            _explosionPrefab.SetActive(true);
+            StartCoroutine(InactiveCoroutine(_deathInactiveDelay));
         }
 
         public void ReachedPathEnd()
@@ -82,8 +105,17 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
             if (_currentHealth < 1)
             {
-
+                Destroyed();
             }
+        }
+
+        protected IEnumerator InactiveCoroutine(float animationLength)
+        {
+            yield return new WaitForSeconds(0.5f);
+            _anim.SetTrigger("Destroyed");
+
+            yield return new WaitForSeconds(animationLength);
+            gameObject.SetActive(false);
         }
     }
 }

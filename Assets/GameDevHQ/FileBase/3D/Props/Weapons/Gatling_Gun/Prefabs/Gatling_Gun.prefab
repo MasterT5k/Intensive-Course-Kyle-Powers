@@ -680,7 +680,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 50
+    maxNumParticles: 100
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -5077,7 +5077,10 @@ MonoBehaviour:
   _muzzleFlash: {fileID: 1905276477678454}
   _bulletCasings: {fileID: 198239830521320308}
   _fireSound: {fileID: 8300000, guid: 08e0cb88300e54b09aa0deb684c3a3de, type: 3}
-  _warFundValue: 0
+  _warFundValue: 200
+  _towerID: 0
+  _rotationPoint: {fileID: 4445333471610312}
+  _damagePerSecond: 1
 --- !u!82 &82825197453988258
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10314,7 +10317,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 0.375
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -10483,7 +10486,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.72
+      scalar: 0.375
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -15076,4 +15079,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56297d6e9a84d9949ba8dbfdbaab887c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemysInRange: []

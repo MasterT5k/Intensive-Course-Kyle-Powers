@@ -1,4 +1,5 @@
-﻿using GameDevHQ.Interface.ITowerNS;
+﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,17 +32,26 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         private ParticleSystem _bulletCasings = null; //reference to the bullet casing effect to play when firing
         [SerializeField]
         private AudioClip _fireSound = null; //Reference to the audio clip
+
         [SerializeField]
         private int _warFundValue = 0;
+        [SerializeField]
+        private int _towerID = -1;
+        [SerializeField]
+        private Transform _rotationPoint = null;
+        [SerializeField]
+        private int _damagePerSecond = 1;
+        private float _attackDelay = -1f;
 
         private AudioSource _audioSource; //reference to the audio source component
         private bool _startWeaponNoise = true;
 
-        public int WarFundValue { get; set; } = 200;
+        public int WarFundValue { get; set; }
         public int TowerID { get; set; } = 0;
         public MeshRenderer AttackRange { get; set; }
         public GameObject EnemyToTarget { get; set; }
         public bool IsEnemyInRange { get; set; }
+        public Transform RotationObj { get; set; }
 
         private void OnEnable()
         {
@@ -53,6 +63,11 @@ namespace GameDevHQ.FileBase.Gatling_Gun
             TowerPlacement.onSelectTower -= PlaceMode;
         }
 
+        void Awake()
+        {
+            Init();
+        }
+
         // Use this for initialization
         void Start()
         {
@@ -61,43 +76,51 @@ namespace GameDevHQ.FileBase.Gatling_Gun
             _audioSource.playOnAwake = false; //disabling play on awake
             _audioSource.loop = true; //making sure our sound effect loops
             _audioSource.clip = _fireSound; //assign the clip to play
-            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
-            if (AttackRange != null)
-            {
-                AttackRange.enabled = false;
-            }
+            
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (IsEnemyInRange == true)
+            {
+                RotationObj.LookAt(EnemyToTarget.transform, Vector3.up);
+                RotateBarrel(); //Call the rotation function responsible for rotating our gun barrel
+                _muzzleFlash.SetActive(true); //enable muzzle effect particle effect
+                _bulletCasings.Emit(1); //Emit the bullet casing particle effect  
 
+                if (_startWeaponNoise == true) //checking if we need to start the gun sound
+                {
+                    _audioSource.Play(); //play audio clip attached to audio source
+                    _startWeaponNoise = false; //set the start weapon noise value to false to prevent calling it again
+                }
 
-            //if (Input.GetMouseButton(0)) //Check for left click (held) user input
-            //{ 
-            //    RotateBarrel(); //Call the rotation function responsible for rotating our gun barrel
-            //    _muzzleFlash.SetActive(true); //enable muzzle effect particle effect
-            //    _bulletCasings.Emit(1); //Emit the bullet casing particle effect  
-
-            //    if (_startWeaponNoise == true) //checking if we need to start the gun sound
-            //    {
-            //        _audioSource.Play(); //play audio clip attached to audio source
-            //        _startWeaponNoise = false; //set the start weapon noise value to false to prevent calling it again
-            //    }
-
-            //}
-            //else if (Input.GetMouseButtonUp(0)) //Check for left click (release) user input
-            //{      
-            //    _muzzleFlash.SetActive(false); //turn off muzzle flash particle effect
-            //    _audioSource.Stop(); //stop the sound effect from playing
-            //    _startWeaponNoise = true; //set the start weapon noise value to true
-            //}
+                if (Time.time > _attackDelay)
+                {
+                    _attackDelay = Time.time + 1f;
+                    EnemyToTarget.GetComponent<EnemyClass>().Damage(_damagePerSecond);
+                }
+            }
+            else if (IsEnemyInRange == false && _startWeaponNoise == false) 
+            {
+                _muzzleFlash.SetActive(false); //turn off muzzle flash particle effect
+                _audioSource.Stop(); //stop the sound effect from playing
+                _startWeaponNoise = true; //set the start weapon noise value to true
+            }
         }
 
         // Method to rotate gun barrel 
         void RotateBarrel() 
         {
             _gunBarrel.transform.Rotate(Vector3.forward * Time.deltaTime * -500.0f); //rotate the gun barrel along the "forward" (z) axis at 500 meters per second
+        }
+
+        public void Init()
+        {
+            WarFundValue = _warFundValue;
+            TowerID = _towerID;
+            AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
+            RotationObj = _rotationPoint;
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -114,12 +137,27 @@ namespace GameDevHQ.FileBase.Gatling_Gun
 
         public void AttackEnemy(GameObject enemy)
         {
-            
+            if (EnemyToTarget != enemy || EnemyToTarget == null)
+            {
+                EnemyToTarget = enemy;
+            }
+            IsEnemyInRange = true;
         }
 
         public void NoEnemiesInRange()
         {
-            
+            EnemyToTarget = null;
+            IsEnemyInRange = false;
+        }
+
+        IEnumerator DamageEnemy(EnemyClass enemy = null)
+        {
+            while (true)
+            {
+                Debug.Log("FIRE!");
+                enemy.Damage(1);
+                yield return new WaitForSeconds(2f);
+            }
         }
     }
 
