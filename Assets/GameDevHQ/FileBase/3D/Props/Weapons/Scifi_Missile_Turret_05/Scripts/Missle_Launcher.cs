@@ -45,6 +45,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         public GameObject EnemyToTarget { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
+        public List<GameObject> EnemiesInRange { get; set; }
 
         private void OnEnable()
         {
@@ -134,6 +135,11 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         }
 
         public void NoEnemiesInRange()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveEnemy(GameObject enemy)
         {
             throw new System.NotImplementedException();
         }

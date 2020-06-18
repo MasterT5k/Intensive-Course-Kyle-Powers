@@ -13,6 +13,7 @@ using GameDevHQ.Enemy.EnemyClassNS;
 
 namespace GameDevHQ.FileBase.Missile_Launcher
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class Missile_Launcher : MonoBehaviour, ITower
     {
         public enum MissileType
@@ -22,26 +23,26 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         }
 
         [SerializeField]
-        private GameObject _missilePrefab = null; //holds the missle gameobject to clone
+        private GameObject _missilePrefab = null;
         [SerializeField]
-        private MissileType _missileType = MissileType.Homing; //type of missle to be launched
+        private MissileType _missileType = MissileType.Homing;
         [SerializeField]
-        private GameObject[] _misslePositions = null; //array to hold the rocket positions on the turret
+        private GameObject[] _misslePositions = null;
         [SerializeField]
-        private float _fireDelay = 0f; //fire delay between rockets
+        private float _fireDelay = 0f;
         [SerializeField]
-        private float _launchSpeed = 0f; //initial launch speed of the rocket
+        private float _launchSpeed = 0f;
         [SerializeField]
-        private float _power = 0f; //power to apply to the force of the rocket
+        private float _power = 0f;
         [SerializeField]
-        private float _fuseDelay = 0f; //fuse delay before the rocket launches
+        private float _fuseDelay = 0f;
         [SerializeField]
-        private float _reloadTime = 0f; //time in between reloading the rockets
+        private float _reloadTime = 0f;
         [SerializeField]
-        private float _destroyTime = 10.0f; //how long till the rockets get cleaned up
-        private bool _launched; //bool to check if we launched the rockets
+        private float _destroyTime = 10.0f;
+        private bool _launched;
         [SerializeField]
-        private Transform _target = null; //Who should the rocket fire at?
+        private Transform _target = null;
 
         [SerializeField]
         private int _warFundValue = 0;
@@ -60,14 +61,17 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         public GameObject EnemyToTarget { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
+        public List<GameObject> EnemiesInRange { get; set; }
 
         private void OnEnable()
         {
+            EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
         }
 
         private void OnDisable()
         {
+            EnemyClass.onHealthGone -= RemoveEnemy;
             TowerPlacement.onSelectTower -= PlaceMode;
         }
 
@@ -84,42 +88,61 @@ namespace GameDevHQ.FileBase.Missile_Launcher
 
                 if (_launched == false)
                 {
-                    _launched = true; //set the launch bool to true
-                    StartCoroutine(FireRocketsRoutine()); //start a coroutine that fires the rockets. 
+                    _launched = true;
+                    StartCoroutine(FireRocketsRoutine());
                 }
             }
         }
 
         IEnumerator FireRocketsRoutine()
         {
-            for (int i = 0; i < _misslePositions.Length; i++) //for loop to iterate through each missle position
+            for (int i = 0; i < _misslePositions.Length; i++)
             {
                 if (_target == null)
                 {
                     break;
                 }
 
-                GameObject rocket = Instantiate(_missilePrefab); //instantiate a rocket                
+                GameObject rocket = Instantiate(_missilePrefab);
 
-                rocket.transform.parent = _misslePositions[i].transform; //set the rockets parent to the missle launch position 
-                rocket.transform.localPosition = Vector3.zero; //set the rocket position values to zero
-                rocket.transform.localEulerAngles = new Vector3(-90, 0, 0); //set the rotation values to be properly aligned with the rockets forward direction
-                rocket.transform.parent = null; //set the rocket parent to null
+                rocket.transform.parent = _misslePositions[i].transform;
+                rocket.transform.localPosition = Vector3.zero;
+                rocket.transform.localEulerAngles = new Vector3(-90, 0, 0);
+                rocket.transform.parent = null;
 
-                rocket.GetComponent<Missile.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, Damage); //assign missle properties 
+                rocket.GetComponent<Missile.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, Damage);
 
-                _misslePositions[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
+                _misslePositions[i].SetActive(false);
 
-                yield return new WaitForSeconds(AttackDelay); //wait for the firedelay
+                yield return new WaitForSeconds(AttackDelay);
             }
 
-            for (int i = 0; i < _misslePositions.Length; i++) //itterate through missle positions
+            for (int i = 0; i < _misslePositions.Length; i++)
             {
-                yield return new WaitForSeconds(_reloadTime); //wait for reload time
-                _misslePositions[i].SetActive(true); //enable fake rocket to show ready to fire
+                yield return new WaitForSeconds(_reloadTime);
+                _misslePositions[i].SetActive(true);
             }
 
-            _launched = false; //set launch bool to false
+            _launched = false;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Enemy"))
+            {
+                GameObject enemy = other.gameObject;
+                EnemiesInRange.Add(enemy);
+                AttackEnemy(EnemiesInRange[0]);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Enemy"))
+            {
+                GameObject enemy = other.gameObject;
+                RemoveEnemy(enemy);
+            }
         }
 
         public void Init()
@@ -130,6 +153,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             RotationObj = _rotationPoint;
             AttackDelay = _fireDelay;
             Damage = _damage;
+            EnemiesInRange = new List<GameObject>();
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -144,9 +168,25 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             }
         }
 
+        public void RemoveEnemy(GameObject enemy)
+        {
+            EnemiesInRange.Remove(enemy);
+            if (EnemiesInRange.Count > 0)
+            {
+                AttackEnemy(EnemiesInRange[0]);
+            }
+            else
+            {
+                NoEnemiesInRange();
+            }
+        }
+
         public void AttackEnemy(GameObject enemy)
         {
-            EnemyToTarget = enemy;
+            if (EnemyToTarget != enemy || EnemyToTarget == null)
+            {
+                EnemyToTarget = enemy;
+            }
             IsEnemyInRange = true;
             _target = EnemyToTarget.GetComponent<EnemyClass>().GetTarget();
         }

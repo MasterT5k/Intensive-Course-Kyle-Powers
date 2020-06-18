@@ -10,7 +10,6 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle
     {
         [SerializeField]
         private ParticleSystem _particle = null; //reference to the particle system
-
         [SerializeField]
         private float _launchSpeed = 0f; //launch speed of the rocket
         [SerializeField]
@@ -49,7 +48,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle
 
 
         // Update is called once per frame
-        void FixedUpdate()
+        void Update()
         {
             if (_fuseOut == false) //check if fuseOut is false
                 return;

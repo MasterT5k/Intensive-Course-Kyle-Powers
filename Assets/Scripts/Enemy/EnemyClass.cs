@@ -24,6 +24,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected float _deathInactiveDelay = 5f;
         [SerializeField]
         protected Transform _target = null;
+        [SerializeField]
+        protected Renderer[] _renders = null;
 
         public static event Action<int> onDestroyed;
         public static event Action<GameObject> onHealthGone;
@@ -40,6 +42,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             _agent = GetComponent<NavMeshAgent>();
             _anim = GetComponent<Animator>();
             _collider = GetComponent<Collider>();
+            _renders = GetComponentsInChildren<Renderer>();
 
             if (_agent == null)
             {
@@ -82,6 +85,15 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             if (_collider.enabled == false)
             {
                 _collider.enabled = true;
+            }
+
+            for (int i = 0; i < _renders.Length; i++)
+            {
+                Renderer render = _renders[i];
+                if (render.enabled == false)
+                {
+                    render.enabled = true;
+                }
             }
 
             if (_endPoint == null)
@@ -135,6 +147,18 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         {
             yield return new WaitForSeconds(inactiveDelay);
             _explosionPrefab.SetActive(false);
+
+            for (int i = 0; i < _renders.Length; i++)
+            {
+                Renderer render = _renders[i];
+                if (render.enabled == true)
+                {
+                    render.enabled = false;
+                }
+            }
+
+            _anim.SetTrigger("Reset");
+            yield return new WaitForSeconds(2f);
             gameObject.SetActive(false);
         }
     }

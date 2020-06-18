@@ -1,7 +1,6 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +21,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
     /// </summary>
 
     [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(Rigidbody))]
     public class Gatling_Gun : MonoBehaviour, ITower
     {
         [SerializeField]
@@ -41,7 +41,8 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         private Transform _rotationPoint = null;
         [SerializeField]
         private int _damage = 1;
-        private float _attackDelay = -1f;
+        [SerializeField]
+        private float _attackDelay = 1f;
 
         private AudioSource _audioSource;
         private bool _startWeaponNoise = true;
@@ -54,14 +55,17 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         public GameObject EnemyToTarget { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
+        public List<GameObject> EnemiesInRange { get; set; }
 
         private void OnEnable()
         {
+            EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
         }
 
         private void OnDisable()
         {
+            EnemyClass.onHealthGone -= RemoveEnemy;
             TowerPlacement.onSelectTower -= PlaceMode;
         }
 
@@ -96,7 +100,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
 
                 if (Time.time > AttackDelay)
                 {
-                    AttackDelay = Time.time + 1f;
+                    AttackDelay = Time.time + _attackDelay;
                     EnemyToTarget.GetComponent<EnemyClass>().Damage(Damage);
                 }
             }
@@ -113,14 +117,33 @@ namespace GameDevHQ.FileBase.Gatling_Gun
             _gunBarrel.transform.Rotate(Vector3.forward * Time.deltaTime * -500.0f);
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Enemy"))
+            {
+                GameObject enemy = other.gameObject;
+                EnemiesInRange.Add(enemy);
+                AttackEnemy(EnemiesInRange[0]);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Enemy"))
+            {
+                GameObject enemy = other.gameObject;
+                RemoveEnemy(enemy);
+            }
+        }
+
         public void Init()
         {
             WarFundValue = _warFundValue;
             TowerID = _towerID;
             AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             RotationObj = _rotationPoint;
-            AttackDelay = _attackDelay;
             Damage = _damage;
+            EnemiesInRange = new List<GameObject>();
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -132,6 +155,19 @@ namespace GameDevHQ.FileBase.Gatling_Gun
             else
             {
                 AttackRange.enabled = false;
+            }
+        }
+
+        public void RemoveEnemy(GameObject enemy)
+        {
+            EnemiesInRange.Remove(enemy);
+            if (EnemiesInRange.Count > 0)
+            {
+                AttackEnemy(EnemiesInRange[0]);
+            }
+            else
+            {
+                NoEnemiesInRange();
             }
         }
 
