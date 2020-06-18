@@ -7,6 +7,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 {
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(Collider))]
     public abstract class EnemyClass : MonoBehaviour
     {
         [SerializeField]
@@ -21,6 +22,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected GameObject _explosionPrefab = null;
         [SerializeField]
         protected float _deathInactiveDelay = 5f;
+        [SerializeField]
+        protected Transform _target = null;
 
         public static event Action<int> onDestroyed;
         public static event Action<GameObject> onHealthGone;
@@ -30,11 +33,13 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected NavMeshAgent _agent;
         protected Animator _anim;
         protected Transform _endPoint;
+        protected Collider _collider;
 
         public virtual void Init()
         {
             _agent = GetComponent<NavMeshAgent>();
             _anim = GetComponent<Animator>();
+            _collider = GetComponent<Collider>();
 
             if (_agent == null)
             {
@@ -43,7 +48,12 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
             if (_anim == null)
             {
-                Debug.LogError("Animator in NULL");
+                Debug.LogError("Animator is NULL");
+            }
+
+            if (_collider == null)
+            {
+                Debug.LogError("Collider is NULL");
             }
         }
 
@@ -69,6 +79,11 @@ namespace GameDevHQ.Enemy.EnemyClassNS
                 _agent.isStopped = false;
             }
 
+            if (_collider.enabled == false)
+            {
+                _collider.enabled = true;
+            }
+
             if (_endPoint == null)
             {
                 _endPoint = onGetEndPoint?.Invoke();
@@ -92,6 +107,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             _agent.isStopped = true;
             _explosionPrefab.SetActive(true);
             _anim.SetTrigger("Destroyed");
+            _collider.enabled = false;
             StartCoroutine(InactiveCoroutine(_deathInactiveDelay));
         }
 
@@ -108,6 +124,11 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             {
                 Destroyed();
             }
+        }
+
+        public Transform GetTarget()
+        {
+            return _target;
         }
 
         protected IEnumerator InactiveCoroutine(float inactiveDelay)

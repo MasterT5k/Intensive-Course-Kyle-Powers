@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameDevHQ.Enemy.EnemyClassNS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +24,8 @@ namespace GameDevHQ.FileBase.Missile_Launcher.Missile
         private float _power = 0f; //power of the rocket
         [SerializeField] //fuse delay of the rocket
         private float _fuseDelay = 0f;
+        [SerializeField]
+        private int _damage = 0;
 
         private Rigidbody _rigidbody; //reference to the rigidbody of the rocket
         private AudioSource _audioSource; //reference to the audiosource of the rocket
@@ -57,7 +60,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher.Missile
 
 
         // Update is called once per frame
-        void FixedUpdate()
+        void Update()
         {
             if (_fuseOut == false) //check if fuseOut is false
                 return;
@@ -105,29 +108,33 @@ namespace GameDevHQ.FileBase.Missile_Launcher.Missile
 
                 }
             }
-
         }
 
         /// <summary>
         /// This method is used to assign traits to our missle assigned from the launcher.
         /// </summary>
-        public void AssignMissleRules(Missile_Launcher.MissileType missileType, Transform target, float launchSpeed, float power, float fuseDelay, float destroyTimer)
+        public void AssignMissleRules(Missile_Launcher.MissileType missileType, Transform target, float launchSpeed, float power, float fuseDelay, float destroyTimer, int damage)
         {
             _missileType = missileType; //assign the missle type
             _target = target; //Who should the rocket follow?
             _launchSpeed = launchSpeed; //set the launch speed
             _power = power; //set the power
             _fuseDelay = fuseDelay; //set the fuse delay
+            _damage = damage;
             Destroy(this.gameObject, destroyTimer); //destroy the rocket after destroyTimer 
         }
 
         private void OnCollisionEnter(Collision other)
         {
-            Destroy(other.gameObject); //destroy collided object
+            if (other.collider.CompareTag("Enemy"))
+            {
+                
+                other.collider.GetComponent<EnemyClass>().Damage(_damage);
+            }
 
             if (_explosionPrefab != null)
                 Instantiate(_explosionPrefab, transform.position, Quaternion.identity); //instantiate explosion
-
+            Debug.Log("Hit: " + other.collider.name);
             Destroy(this.gameObject); //destroy the rocket (this)
         }
     }

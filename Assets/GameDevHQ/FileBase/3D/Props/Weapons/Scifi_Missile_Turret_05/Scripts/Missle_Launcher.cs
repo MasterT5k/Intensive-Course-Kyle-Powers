@@ -37,14 +37,14 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 
         private bool _launched; //bool to check if we launched the rockets
 
+        public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }
         public int TowerID { get; set; }
-        public MeshRenderer AttackRange { get; set; }
-        public GameObject EnemyToTarget { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public bool IsEnemyInRange { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public Transform RotationObj { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int Damage { get; set; }
         public float AttackDelay { get; set; }
+        public GameObject EnemyToTarget { get; set; }
+        public MeshRenderer AttackRange { get; set; }
+        public Transform RotationObj { get; set; }
 
         private void OnEnable()
         {
@@ -74,8 +74,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         {
             for (int i = 0; i < _misslePositionsLeft.Length; i++) //for loop to iterate through each missle position
             {
-                GameObject rocketLeft = Instantiate(_missilePrefab) as GameObject; //instantiate a rocket
-                GameObject rocketRight = Instantiate(_missilePrefab) as GameObject; //instantiate a rocket
+                GameObject rocketLeft = Instantiate(_missilePrefab); //instantiate a rocket
+                GameObject rocketRight = Instantiate(_missilePrefab); //instantiate a rocket
 
                 rocketLeft.transform.parent = _misslePositionsLeft[i].transform; //set the rockets parent to the missle launch position 
                 rocketRight.transform.parent = _misslePositionsRight[i].transform; //set the rockets parent to the missle launch position 
