@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameDevHQ.Interface.IHealth;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,14 +9,12 @@ namespace GameDevHQ.Enemy.EnemyClassNS
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(Collider))]
-    public abstract class EnemyClass : MonoBehaviour
+    public abstract class EnemyClass : MonoBehaviour, IHealth
     {
         [SerializeField]
         protected float _speed = 1.5f;
         [SerializeField]
         protected int _startingHealth = 1;
-        [SerializeField]
-        protected int _currentHealth;
         [SerializeField]
         protected int _currencyValue = 0;
         [SerializeField]
@@ -37,12 +36,16 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected Transform _endPoint;
         protected Collider _collider;
 
+        public int StartingHealth { get; set; }
+        public int Health { get; set; }
+
         public virtual void Init()
         {
             _agent = GetComponent<NavMeshAgent>();
             _anim = GetComponent<Animator>();
             _collider = GetComponent<Collider>();
             _renders = GetComponentsInChildren<Renderer>();
+            StartingHealth = _startingHealth;
 
             if (_agent == null)
             {
@@ -100,13 +103,13 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             {
                 _endPoint = onGetEndPoint?.Invoke();
                 Debug.Log("End Point was retrieved.");
-                _currentHealth = _startingHealth;
+                Health = StartingHealth;
                 _agent.speed = _speed;
                 _agent.SetDestination(_endPoint.position);
             }
             else
             {
-                _currentHealth = _startingHealth;
+                Health = StartingHealth;
                 _agent.speed = _speed;
                 _agent.SetDestination(_endPoint.position);
             }
@@ -130,9 +133,9 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public void Damage(int amount)
         {
-            _currentHealth -= amount;
+            Health -= amount;
 
-            if (_currentHealth < 1)
+            if (Health < 1)
             {
                 Destroyed();
             }
