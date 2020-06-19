@@ -935,7 +935,6 @@ GameObject:
   - component: {fileID: 5136213177893624132}
   - component: {fileID: 6409217649045778939}
   - component: {fileID: 2567801548609495997}
-  - component: {fileID: 5378837425483211830}
   m_Layer: 2
   m_Name: Attack Range
   m_TagString: Attack Range
@@ -1004,16 +1003,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &5378837425483211830
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5876993671002508854}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}

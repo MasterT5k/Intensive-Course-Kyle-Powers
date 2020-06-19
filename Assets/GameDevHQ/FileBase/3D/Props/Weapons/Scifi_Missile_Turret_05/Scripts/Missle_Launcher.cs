@@ -4,13 +4,23 @@ using UnityEngine;
 using GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
+using GameDevHQ.Enemy.EnemyClassNS;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class Missle_Launcher : MonoBehaviour, ITower
     {
+        public enum MissileType
+        {
+            Normal,
+            Homing
+        }
+
         [SerializeField]
         private GameObject _missilePrefab = null; //holds the missle gameobject to clone
+        [SerializeField]
+        private MissileType _missileType = MissileType.Homing;
         [SerializeField]
         private GameObject[] _misslePositionsLeft = null; //array to hold the rocket positions on the turret
         [SerializeField]
@@ -27,11 +37,15 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         private float _reloadTime = 0f; //time in between reloading the rockets
         [SerializeField]
         private float _destroyTime = 10.0f; //how long till the rockets get cleaned up
+        [SerializeField]
+        private Transform _target = null;
 
         [SerializeField]
         private int _warFundValue = 0;
         [SerializeField]
         private int _towerID = -1;
+        [SerializeField]
+        private int _damage = 0;
         [SerializeField]
         private Transform _rotationPoint = null;
 
@@ -49,11 +63,13 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 
         private void OnEnable()
         {
+            EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
         }
 
         private void OnDisable()
         {
+            EnemyClass.onHealthGone -= RemoveEnemy;
             TowerPlacement.onSelectTower -= PlaceMode;
         }
 
@@ -75,6 +91,11 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         {
             for (int i = 0; i < _misslePositionsLeft.Length; i++) //for loop to iterate through each missle position
             {
+                if (_target == null)
+                {
+                    break;
+                }
+
                 GameObject rocketLeft = Instantiate(_missilePrefab); //instantiate a rocket
                 GameObject rocketRight = Instantiate(_missilePrefab); //instantiate a rocket
 
@@ -90,13 +111,13 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
                 rocketLeft.transform.parent = null; //set the rocket parent to null
                 rocketRight.transform.parent = null; //set the rocket parent to null
 
-                rocketLeft.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missle>().AssignMissleRules(_launchSpeed, _power, _fuseDelay, _destroyTime); //assign missle properties 
-                rocketRight.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missle>().AssignMissleRules(_launchSpeed, _power, _fuseDelay, _destroyTime); //assign missle properties 
+                rocketLeft.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, Damage);
+                rocketRight.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, Damage);
 
                 _misslePositionsLeft[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
                 _misslePositionsRight[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
 
-                yield return new WaitForSeconds(_fireDelay); //wait for the firedelay
+                yield return new WaitForSeconds(AttackDelay); //wait for the firedelay
             }
 
             for (int i = 0; i < _misslePositionsLeft.Length; i++) //itterate through missle positions
@@ -109,12 +130,34 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             _launched = false; //set launch bool to false
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Enemy"))
+            {
+                GameObject enemy = other.gameObject;
+                EnemiesInRange.Add(enemy);
+                AttackEnemy(EnemiesInRange[0]);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Enemy"))
+            {
+                GameObject enemy = other.gameObject;
+                RemoveEnemy(enemy);
+            }
+        }
+
         public void Init()
         {
             WarFundValue = _warFundValue;
             TowerID = _towerID;
             AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             RotationObj = _rotationPoint;
+            AttackDelay = _fireDelay;
+            Damage = _damage;
+            EnemiesInRange = new List<GameObject>();
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -129,19 +172,34 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             }
         }
 
+        public void RemoveEnemy(GameObject enemy)
+        {
+            EnemiesInRange.Remove(enemy);
+            if (EnemiesInRange.Count > 0)
+            {
+                AttackEnemy(EnemiesInRange[0]);
+            }
+            else
+            {
+                NoEnemiesInRange();
+            }
+        }
+
         public void AttackEnemy(GameObject enemy)
         {
-            throw new System.NotImplementedException();
+            if (EnemyToTarget != enemy || EnemyToTarget == null)
+            {
+                EnemyToTarget = enemy;
+            }
+            IsEnemyInRange = true;
+            _target = EnemyToTarget.GetComponent<EnemyClass>().GetTarget();
         }
 
         public void NoEnemiesInRange()
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEnemy(GameObject enemy)
-        {
-            throw new System.NotImplementedException();
+            EnemyToTarget = null;
+            IsEnemyInRange = false;
+            _target = null;
         }
     }
 }

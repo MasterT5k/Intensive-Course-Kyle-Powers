@@ -40,7 +40,6 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         private float _reloadTime = 0f;
         [SerializeField]
         private float _destroyTime = 10.0f;
-        private bool _launched;
         [SerializeField]
         private Transform _target = null;
 
@@ -52,6 +51,8 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         private int _damage = 0;
         [SerializeField]
         private Transform _rotationPoint = null;
+
+        private bool _launched;
 
         public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }

@@ -584,7 +584,6 @@ GameObject:
   - component: {fileID: 2241682476309656934}
   - component: {fileID: 1525936883888072033}
   - component: {fileID: 9159109859293621533}
-  - component: {fileID: 8128441302689317991}
   m_Layer: 2
   m_Name: Attack Range
   m_TagString: Attack Range
@@ -653,16 +652,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &8128441302689317991
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8182416323595835287}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
