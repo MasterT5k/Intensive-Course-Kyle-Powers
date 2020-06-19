@@ -971,7 +971,6 @@ GameObject:
   - component: {fileID: 3527989260045944723}
   - component: {fileID: 6481311320825085976}
   - component: {fileID: 6295777122009105088}
-  - component: {fileID: 2529936061123672182}
   m_Layer: 2
   m_Name: Attack Range
   m_TagString: Attack Range
@@ -1069,15 +1068,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2529936061123672182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4816600859203693080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56297d6e9a84d9949ba8dbfdbaab887c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
