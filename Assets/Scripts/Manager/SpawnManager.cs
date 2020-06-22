@@ -44,8 +44,6 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             StartCoroutine(SpawnCoroutine());
         }
 
-
-
         private IEnumerator SpawnCoroutine()
         {
             int amountToSpawn = _baseSpawnCount * _currentWave;

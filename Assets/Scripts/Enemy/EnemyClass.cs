@@ -77,9 +77,9 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void Activate()
         {
-            if (_agent.isStopped == true)
+            if (_agent.enabled == false)
             {
-                _agent.isStopped = false;
+                _agent.enabled = true;
             }
 
             if (_collider.enabled == false)
@@ -107,7 +107,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         {
             onDestroyed?.Invoke(_currencyValue);
             onHealthGone?.Invoke(this.gameObject);
-            _agent.isStopped = true;
+            _agent.enabled = false;
             _explosionPrefab.SetActive(true);
             _anim.SetTrigger("Destroyed");
             _collider.enabled = false;
