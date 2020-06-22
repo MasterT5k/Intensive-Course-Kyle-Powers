@@ -1,4 +1,5 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Interface.IHealth;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using System.Collections;
@@ -23,7 +24,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
 
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(Rigidbody))]
-    public class Dual_Gatling_Gun : MonoBehaviour, ITower
+    public class Dual_Gatling_Gun : MonoBehaviour, ITower, IHealth
     {
         [SerializeField]
         private Transform[] _gunBarrel = null;
@@ -51,7 +52,9 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }
         public int TowerID { get; set; }
-        public int Damage { get; set; }
+        public int DamageAmount { get; set; }
+        public int StartingHealth { get; set; }
+        public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
         public MeshRenderer AttackRange { get; set; }
@@ -108,7 +111,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
                 if (Time.time > AttackDelay)
                 {
                     AttackDelay = Time.time + _attackDelay;
-                    EnemyToTarget.GetComponent<EnemyClass>().Damage(Damage);
+                    EnemyToTarget.GetComponent<EnemyClass>().Damage(DamageAmount);
                 }
             }
             else if (IsEnemyInRange == false && _startWeaponNoise == false)
@@ -153,7 +156,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
             TowerID = _towerID;
             AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             RotationObj = _rotationPoint;
-            Damage = _damage;
+            DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
         }
 
@@ -195,6 +198,21 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         {
             EnemyToTarget = null;
             IsEnemyInRange = false;
+        }
+
+        public void Damage(int amount)
+        {
+            Health -= amount;
+
+            if (Health < 1)
+            {
+                Destroyed();
+            }
+        }
+
+        public void Destroyed()
+        {
+
         }
     }
 

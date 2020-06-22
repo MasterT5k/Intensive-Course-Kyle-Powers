@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameDevHQ.FileBase.Gatling_Gun;
 
 namespace GameDevHQ.Tower.PlaceableAreaNS
 {
@@ -22,11 +23,13 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         private void OnEnable()
         {
             TowerPlacement.onSelectTower += PlaceMode;
+            Gatling_Gun.onDestroyed += RemoveTower;
         }
 
         private void OnDisable()
         {
             TowerPlacement.onSelectTower -= PlaceMode;
+            Gatling_Gun.onDestroyed -= RemoveTower;
         }
 
         void Start()
@@ -114,6 +117,20 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
             {
                 _particleObj.SetActive(false);
                 _inPlaceMode = false;
+            }
+        }
+
+        public void RemoveTower(GameObject tower)
+        {
+            if (_placedTower == tower)
+            {
+                _placedTower = null;
+                _canTakeTower = true;
+
+                if (_inPlaceMode == true)
+                {
+                    _particleObj.SetActive(true);
+                }
             }
         }
 

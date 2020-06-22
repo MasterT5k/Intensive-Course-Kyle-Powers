@@ -1,6 +1,8 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Interface.IHealth;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +24,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
 
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(Rigidbody))]
-    public class Gatling_Gun : MonoBehaviour, ITower
+    public class Gatling_Gun : MonoBehaviour, ITower, IHealth
     {
         [SerializeField]
         private Transform _gunBarrel = null;
@@ -38,6 +40,8 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         [SerializeField]
         private int _towerID = -1;
         [SerializeField]
+        private int _startingHealth = 1;
+        [SerializeField]
         private Transform _rotationPoint = null;
         [SerializeField]
         private int _damage = 1;
@@ -50,23 +54,31 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }
         public int TowerID { get; set; }
-        public int Damage { get; set; }
+        public int DamageAmount { get; set; }
+        public int StartingHealth { get; set; }
+        public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
 
+        public static event Action<GameObject> onDestroyed;
+
         private void OnEnable()
         {
             EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
+            Health = StartingHealth;
+            EnemiesInRange.Clear();
+            NoEnemiesInRange();
         }
 
         private void OnDisable()
         {
             EnemyClass.onHealthGone -= RemoveEnemy;
             TowerPlacement.onSelectTower -= PlaceMode;
+            onDestroyed?.Invoke(this.gameObject);
         }
 
         private void Awake()
@@ -101,7 +113,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
                 if (Time.time > AttackDelay)
                 {
                     AttackDelay = Time.time + _attackDelay;
-                    EnemyToTarget.GetComponent<EnemyClass>().Damage(Damage);
+                    EnemyToTarget.GetComponent<EnemyClass>().Damage(DamageAmount);
                 }
             }
             else if (IsEnemyInRange == false && _startWeaponNoise == false) 
@@ -142,8 +154,9 @@ namespace GameDevHQ.FileBase.Gatling_Gun
             TowerID = _towerID;
             AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             RotationObj = _rotationPoint;
-            Damage = _damage;
+            DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
+            StartingHealth = _startingHealth;
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -184,6 +197,22 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         {
             EnemyToTarget = null;
             IsEnemyInRange = false;
+        }
+
+        public void Damage(int amount)
+        {
+            Health -= amount;
+
+            if (Health < 1)
+            {
+                Destroyed();
+            }
+        }
+
+        public void Destroyed()
+        {
+            Debug.Log("Tower " + this.name + " destroyed.");
+            gameObject.SetActive(false);
         }
     }
 }

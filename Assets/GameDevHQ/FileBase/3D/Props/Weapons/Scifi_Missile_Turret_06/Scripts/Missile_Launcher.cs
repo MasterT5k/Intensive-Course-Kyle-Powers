@@ -5,6 +5,7 @@ using GameDevHQ.FileBase.Missile_Launcher.Missile;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Interface.IHealth;
 
 /*
  *@author GameDevHQ 
@@ -14,7 +15,7 @@ using GameDevHQ.Enemy.EnemyClassNS;
 namespace GameDevHQ.FileBase.Missile_Launcher
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class Missile_Launcher : MonoBehaviour, ITower
+    public class Missile_Launcher : MonoBehaviour, ITower, IHealth
     {
         public enum MissileType
         {
@@ -57,7 +58,9 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }
         public int TowerID { get; set; }
-        public int Damage { get; set; }
+        public int DamageAmount { get; set; }
+        public int StartingHealth { get; set; }
+        public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
         public MeshRenderer AttackRange { get; set; }
@@ -111,7 +114,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
                 rocket.transform.localEulerAngles = new Vector3(-90, 0, 0);
                 rocket.transform.parent = null;
 
-                rocket.GetComponent<Missile.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, Damage);
+                rocket.GetComponent<Missile.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, DamageAmount);
 
                 _misslePositions[i].SetActive(false);
 
@@ -153,7 +156,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             RotationObj = _rotationPoint;
             AttackDelay = _fireDelay;
-            Damage = _damage;
+            DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
         }
 
@@ -189,7 +192,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
                 EnemyToTarget = enemy;
             }
             IsEnemyInRange = true;
-            _target = EnemyToTarget.GetComponent<EnemyClass>().GetTarget();
+            _target = EnemyToTarget.GetComponent<EnemyClass>().GetHitTarget();
         }
 
         public void NoEnemiesInRange()
@@ -197,6 +200,21 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             EnemyToTarget = null;
             IsEnemyInRange = false;
             _target = null;
+        }
+
+        public void Damage(int amount)
+        {
+            Health -= amount;
+
+            if (Health < 1)
+            {
+                Destroyed();
+            }
+        }
+
+        public void Destroyed()
+        {
+
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using GameDevHQ.Interface.IHealth;
+﻿using GameDevHQ.FileBase.Gatling_Gun;
+using GameDevHQ.Interface.IHealth;
+using GameDevHQ.Interface.ITowerNS;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -18,21 +20,28 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         [SerializeField]
         protected int _currencyValue = 0;
         [SerializeField]
+        protected int _damage = 1;
+        [SerializeField]
+        private float _attackDelay = 1f;
+        [SerializeField]
         protected GameObject _explosionPrefab = null;
         [SerializeField]
         protected float _deathInactiveDelay = 5f;
         [SerializeField]
-        protected Transform _target = null;
+        protected Transform _hitTarget = null;
 
         public static event Action<int> onDestroyed;
         public static event Action<GameObject> onHealthGone;
         public static event Action onDisabled;
         public static event Func<Transform> onGetEndPoint;
 
+        protected bool _towerInRange = false;
+        protected float _canFire = -1f;
         protected NavMeshAgent _agent;
         protected Animator _anim;
         protected Transform _endPoint;
         protected Collider _collider;
+        protected GameObject _targetedTower;
 
         public int StartingHealth { get; set; }
         public int Health { get; set; }
@@ -67,12 +76,26 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void OnEnable()
         {
+            Gatling_Gun.onDestroyed += TowerDestroyed;
             Activate();
         }
 
         public virtual void OnDisable()
         {
+            Gatling_Gun.onDestroyed -= TowerDestroyed;
             onDisabled?.Invoke();
+        }
+
+        public virtual void Update()
+        {
+            if (_towerInRange == true)
+            {
+                if (Time.time > _canFire)
+                {
+                    _canFire = Time.time + _attackDelay;
+                    _targetedTower.GetComponent<IHealth>().Damage(_damage);
+                }
+            }
         }
 
         public virtual void Activate()
@@ -103,7 +126,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             }
         }
 
-        public void Destroyed()
+        public virtual void Destroyed()
         {
             onDestroyed?.Invoke(_currencyValue);
             onHealthGone?.Invoke(this.gameObject);
@@ -114,12 +137,12 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             StartCoroutine(InactiveCoroutine(_deathInactiveDelay));
         }
 
-        public void ReachedPathEnd()
+        public virtual void ReachedPathEnd()
         {
             gameObject.SetActive(false);
         }
 
-        public void Damage(int amount)
+        public virtual void Damage(int amount)
         {
             Health -= amount;
 
@@ -129,9 +152,24 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             }
         }
 
-        public Transform GetTarget()
+        public virtual void AttackTower()
         {
-            return _target;
+
+        }
+
+        public Transform GetHitTarget()
+        {
+            return _hitTarget;
+        }
+
+        public void TowerDestroyed(GameObject tower)
+        {
+            if (_targetedTower == tower)
+            {
+                _targetedTower = null;
+                _towerInRange = false;
+                Debug.Log("Tower Destroyed.");
+            }
         }
 
         protected IEnumerator InactiveCoroutine(float inactiveDelay)
@@ -140,6 +178,20 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             _anim.Rebind();
             _explosionPrefab.SetActive(false);
             gameObject.SetActive(false);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Attack Range"))
+            {
+                IHealth tower = other.GetComponentInParent<IHealth>();
+
+                if (tower != null)
+                {
+                    _targetedTower = other.transform.parent.gameObject;
+                    _towerInRange = true;
+                }
+            }
         }
     }
 }

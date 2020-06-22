@@ -5,11 +5,12 @@ using GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Interface.IHealth;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class Missle_Launcher : MonoBehaviour, ITower
+    public class Missle_Launcher : MonoBehaviour, ITower, IHealth
     {
         public enum MissileType
         {
@@ -54,7 +55,9 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }
         public int TowerID { get; set; }
-        public int Damage { get; set; }
+        public int DamageAmount { get; set; }
+        public int StartingHealth { get; set; }
+        public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
         public MeshRenderer AttackRange { get; set; }
@@ -111,8 +114,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
                 rocketLeft.transform.parent = null; //set the rocket parent to null
                 rocketRight.transform.parent = null; //set the rocket parent to null
 
-                rocketLeft.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, Damage);
-                rocketRight.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, Damage);
+                rocketLeft.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, DamageAmount);
+                rocketRight.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, DamageAmount);
 
                 _misslePositionsLeft[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
                 _misslePositionsRight[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
@@ -156,7 +159,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             AttackRange = transform.Find("Attack Range").GetComponent<MeshRenderer>();
             RotationObj = _rotationPoint;
             AttackDelay = _fireDelay;
-            Damage = _damage;
+            DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
         }
 
@@ -192,7 +195,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
                 EnemyToTarget = enemy;
             }
             IsEnemyInRange = true;
-            _target = EnemyToTarget.GetComponent<EnemyClass>().GetTarget();
+            _target = EnemyToTarget.GetComponent<EnemyClass>().GetHitTarget();
         }
 
         public void NoEnemiesInRange()
@@ -200,6 +203,21 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             EnemyToTarget = null;
             IsEnemyInRange = false;
             _target = null;
+        }
+
+        public void Damage(int amount)
+        {
+            Health -= amount;
+
+            if (Health < 1)
+            {
+                Destroyed();
+            }
+        }
+
+        public void Destroyed()
+        {
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace GameDevHQ.Interface.ITowerNS
     {
         int WarFundValue { get; set; }
         int TowerID { get; set; }
-        int Damage { get; set; }
+        int DamageAmount { get; set; }
         float AttackDelay { get; set; }
         Transform RotationObj { get; set; }
         MeshRenderer AttackRange { get; set; }
