@@ -1,5 +1,5 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
-using GameDevHQ.Interface.IHealth;
+using GameDevHQ.Interface.IHealthNS;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using System.Collections;
@@ -57,6 +57,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
+        public IHealth TargetHealth { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
@@ -111,7 +112,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
                 if (Time.time > AttackDelay)
                 {
                     AttackDelay = Time.time + _attackDelay;
-                    EnemyToTarget.GetComponent<EnemyClass>().Damage(DamageAmount);
+                    TargetHealth.Damage(DamageAmount);
                 }
             }
             else if (IsEnemyInRange == false && _startWeaponNoise == false)
@@ -190,6 +191,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
             if (EnemyToTarget != enemy || EnemyToTarget == null)
             {
                 EnemyToTarget = enemy;
+                TargetHealth = EnemyToTarget.GetComponent<IHealth>();
             }
             IsEnemyInRange = true;
         }
@@ -197,6 +199,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         public void NoEnemiesInRange()
         {
             EnemyToTarget = null;
+            TargetHealth = null;
             IsEnemyInRange = false;
         }
 

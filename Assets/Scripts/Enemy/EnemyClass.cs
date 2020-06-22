@@ -1,5 +1,5 @@
 ﻿using GameDevHQ.FileBase.Gatling_Gun;
-using GameDevHQ.Interface.IHealth;
+using GameDevHQ.Interface.IHealthNS;
 using GameDevHQ.Interface.ITowerNS;
 using System;
 using System.Collections;
@@ -42,6 +42,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected Transform _endPoint;
         protected Collider _collider;
         protected GameObject _targetedTower;
+        protected IHealth _towerHealth;
 
         public int StartingHealth { get; set; }
         public int Health { get; set; }
@@ -93,7 +94,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
                 if (Time.time > _canFire)
                 {
                     _canFire = Time.time + _attackDelay;
-                    _targetedTower.GetComponent<IHealth>().Damage(_damage);
+                    _towerHealth.Damage(_damage);
                 }
             }
         }
@@ -167,6 +168,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             if (_targetedTower == tower)
             {
                 _targetedTower = null;
+                _towerHealth = null;
                 _towerInRange = false;
                 Debug.Log("Tower Destroyed.");
             }
@@ -189,6 +191,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
                 if (tower != null)
                 {
                     _targetedTower = other.transform.parent.gameObject;
+                    _towerHealth = tower;
                     _towerInRange = true;
                 }
             }

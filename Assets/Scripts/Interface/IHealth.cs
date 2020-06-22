@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameDevHQ.Interface.IHealth
+namespace GameDevHQ.Interface.IHealthNS
 {
     public interface IHealth
     {

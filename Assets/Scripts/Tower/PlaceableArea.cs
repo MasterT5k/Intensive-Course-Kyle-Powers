@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameDevHQ.FileBase.Gatling_Gun;
+using GameDevHQ.FileBase.Missile_Launcher;
 
 namespace GameDevHQ.Tower.PlaceableAreaNS
 {
@@ -24,12 +25,14 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         {
             TowerPlacement.onSelectTower += PlaceMode;
             Gatling_Gun.onDestroyed += RemoveTower;
+            Missile_Launcher.onDestroyed += RemoveTower;
         }
 
         private void OnDisable()
         {
             TowerPlacement.onSelectTower -= PlaceMode;
             Gatling_Gun.onDestroyed -= RemoveTower;
+            Missile_Launcher.onDestroyed -= RemoveTower;
         }
 
         void Start()

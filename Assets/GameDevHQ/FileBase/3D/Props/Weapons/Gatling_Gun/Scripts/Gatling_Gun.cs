@@ -1,5 +1,5 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
-using GameDevHQ.Interface.IHealth;
+using GameDevHQ.Interface.IHealthNS;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using System;
@@ -42,11 +42,11 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         [SerializeField]
         private int _startingHealth = 1;
         [SerializeField]
-        private Transform _rotationPoint = null;
-        [SerializeField]
         private int _damage = 1;
         [SerializeField]
         private float _attackDelay = 1f;
+        [SerializeField]
+        private Transform _rotationPoint = null;
 
         private AudioSource _audioSource;
         private bool _startWeaponNoise = true;
@@ -59,6 +59,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
+        public IHealth TargetHealth { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
@@ -113,7 +114,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
                 if (Time.time > AttackDelay)
                 {
                     AttackDelay = Time.time + _attackDelay;
-                    EnemyToTarget.GetComponent<EnemyClass>().Damage(DamageAmount);
+                    TargetHealth.Damage(DamageAmount);
                 }
             }
             else if (IsEnemyInRange == false && _startWeaponNoise == false) 
@@ -189,6 +190,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
             if (EnemyToTarget != enemy || EnemyToTarget == null)
             {
                 EnemyToTarget = enemy;
+                TargetHealth = EnemyToTarget.GetComponent<IHealth>();
             }
             IsEnemyInRange = true;
         }
@@ -196,6 +198,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
         public void NoEnemiesInRange()
         {
             EnemyToTarget = null;
+            TargetHealth = null;
             IsEnemyInRange = false;
         }
 

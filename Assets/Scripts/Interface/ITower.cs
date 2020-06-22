@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameDevHQ.Interface.IHealthNS;
 
 namespace GameDevHQ.Interface.ITowerNS
 {
@@ -14,6 +15,7 @@ namespace GameDevHQ.Interface.ITowerNS
         Transform RotationObj { get; set; }
         MeshRenderer AttackRange { get; set; }
         GameObject EnemyToTarget { get; set; }
+        IHealth TargetHealth { get; set; }
         bool IsEnemyInRange { get; set; }
         List<GameObject> EnemiesInRange { get; set; }
 

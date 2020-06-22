@@ -5,7 +5,8 @@ using GameDevHQ.FileBase.Missile_Launcher.Missile;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using GameDevHQ.Enemy.EnemyClassNS;
-using GameDevHQ.Interface.IHealth;
+using GameDevHQ.Interface.IHealthNS;
+using System;
 
 /*
  *@author GameDevHQ 
@@ -49,6 +50,8 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         [SerializeField]
         private int _towerID = -1;
         [SerializeField]
+        private int _startingHealth = 1;
+        [SerializeField]
         private int _damage = 0;
         [SerializeField]
         private Transform _rotationPoint = null;
@@ -63,20 +66,27 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
+        public IHealth TargetHealth { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
+
+        public static event Action<GameObject> onDestroyed;
 
         private void OnEnable()
         {
             EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
+            Health = StartingHealth;
+            EnemiesInRange.Clear();
+            NoEnemiesInRange();
         }
 
         private void OnDisable()
         {
             EnemyClass.onHealthGone -= RemoveEnemy;
             TowerPlacement.onSelectTower -= PlaceMode;
+            onDestroyed?.Invoke(this.gameObject);
         }
 
         private void Awake()
@@ -158,6 +168,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             AttackDelay = _fireDelay;
             DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
+            StartingHealth = _startingHealth;
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -190,16 +201,16 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             if (EnemyToTarget != enemy || EnemyToTarget == null)
             {
                 EnemyToTarget = enemy;
+                TargetHealth = EnemyToTarget.GetComponent<IHealth>();
             }
             IsEnemyInRange = true;
-            _target = EnemyToTarget.GetComponent<EnemyClass>().GetHitTarget();
         }
 
         public void NoEnemiesInRange()
         {
             EnemyToTarget = null;
+            TargetHealth = null;
             IsEnemyInRange = false;
-            _target = null;
         }
 
         public void Damage(int amount)
@@ -214,7 +225,8 @@ namespace GameDevHQ.FileBase.Missile_Launcher
 
         public void Destroyed()
         {
-
+            Debug.Log("Tower " + this.name + " destroyed.");
+            gameObject.SetActive(false);
         }
     }
 }

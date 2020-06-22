@@ -5,7 +5,7 @@ using GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using GameDevHQ.Enemy.EnemyClassNS;
-using GameDevHQ.Interface.IHealth;
+using GameDevHQ.Interface.IHealthNS;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 {
@@ -60,6 +60,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         public int Health { get; set; }
         public float AttackDelay { get; set; }
         public GameObject EnemyToTarget { get; set; }
+        public IHealth TargetHealth { get; set; }
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
@@ -193,16 +194,16 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             if (EnemyToTarget != enemy || EnemyToTarget == null)
             {
                 EnemyToTarget = enemy;
+                TargetHealth = EnemyToTarget.GetComponent<IHealth>();
             }
             IsEnemyInRange = true;
-            _target = EnemyToTarget.GetComponent<EnemyClass>().GetHitTarget();
         }
 
         public void NoEnemiesInRange()
         {
             EnemyToTarget = null;
+            TargetHealth = null;
             IsEnemyInRange = false;
-            _target = null;
         }
 
         public void Damage(int amount)
