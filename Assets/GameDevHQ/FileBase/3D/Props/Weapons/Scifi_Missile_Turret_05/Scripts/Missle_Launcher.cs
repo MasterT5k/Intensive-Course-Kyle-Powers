@@ -6,6 +6,7 @@ using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using GameDevHQ.Enemy.EnemyClassNS;
 using GameDevHQ.Interface.IHealthNS;
+using System;
 
 namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 {
@@ -46,6 +47,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         [SerializeField]
         private int _towerID = -1;
         [SerializeField]
+        private int _startingHealth = 1;
+        [SerializeField]
         private int _damage = 0;
         [SerializeField]
         private Transform _rotationPoint = null;
@@ -65,29 +68,40 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
 
+        public static event Action<GameObject> onDestroyed;
+
         private void OnEnable()
         {
             EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
+            Health = StartingHealth;
+            EnemiesInRange.Clear();
+            NoEnemiesInRange();
         }
 
         private void OnDisable()
         {
             EnemyClass.onHealthGone -= RemoveEnemy;
             TowerPlacement.onSelectTower -= PlaceMode;
+            onDestroyed?.Invoke(this.gameObject);
         }
 
-        private void Start()
+        private void Awake()
         {
             Init();
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && _launched == false) //check for space key and if we launched the rockets
+            if (IsEnemyInRange == true)
             {
-                _launched = true; //set the launch bool to true
-                StartCoroutine(FireRocketsRoutine()); //start a coroutine that fires the rockets. 
+                RotationObj.LookAt(EnemyToTarget.transform, Vector3.up);
+
+                if (_launched == false)
+                {
+                    _launched = true;
+                    StartCoroutine(FireRocketsRoutine());
+                }
             }
         }
 
@@ -162,6 +176,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             AttackDelay = _fireDelay;
             DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
+            StartingHealth = _startingHealth;
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -218,7 +233,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 
         public void Destroyed()
         {
-
+            Debug.Log("Tower " + this.name + " destroyed.");
+            gameObject.SetActive(false);
         }
     }
 }

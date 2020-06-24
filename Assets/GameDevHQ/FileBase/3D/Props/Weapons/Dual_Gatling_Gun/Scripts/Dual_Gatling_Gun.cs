@@ -2,7 +2,7 @@
 using GameDevHQ.Interface.IHealthNS;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,11 +40,13 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         [SerializeField]
         private int _towerID = -1;
         [SerializeField]
-        private Transform _rotationPoint = null;
+        private int _startingHealth = 1;
         [SerializeField]
         private int _damage = 0;
         [SerializeField]
         private float _attackDelay = 1f;
+        [SerializeField]
+        private Transform _rotationPoint = null;
 
         private AudioSource _audioSource;
         private bool _startWeaponNoise = true;
@@ -62,16 +64,22 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
 
+        public static event Action<GameObject> onDestroyed;
+
         private void OnEnable()
         {
             EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
+            Health = StartingHealth;
+            EnemiesInRange.Clear();
+            NoEnemiesInRange();
         }
 
         private void OnDisable()
         {
             EnemyClass.onHealthGone -= RemoveEnemy;
             TowerPlacement.onSelectTower -= PlaceMode;
+            onDestroyed?.Invoke(this.gameObject);
         }
 
         private void Awake()
@@ -159,6 +167,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
             RotationObj = _rotationPoint;
             DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
+            StartingHealth = _startingHealth;
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -215,7 +224,8 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
 
         public void Destroyed()
         {
-
+            Debug.Log("Tower " + this.name + " destroyed.");
+            gameObject.SetActive(false);
         }
     }
 

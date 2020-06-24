@@ -43,7 +43,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
             int numberOfWaves = SpawnManager.Instance.GetNumberOfWaves();
 
             _enemyPool = GenerateEnemies(baseSpawnCount, numberOfWaves);
-            _towerPool = GenerateTowers(_towerPrefabs.Length, _baseNumberOfEachType);
+            _towerPool = GenerateTowers(_baseNumberOfEachType);
         }
 
         List<GameObject> GenerateEnemies(int baseSpawnCount, int numberOfWaves)
@@ -61,9 +61,9 @@ namespace GameDevHQ.Manager.PoolManagerNS
             return _enemyPool;
         }
 
-        List<GameObject> GenerateTowers(int numberOfTypes, int baseNumber)
+        List<GameObject> GenerateTowers(int baseNumber)
         {
-            int towersToCreate = numberOfTypes * baseNumber;
+            int towersToCreate = baseNumber;
 
             for (int i = 0; i < towersToCreate; i++)
             {
@@ -98,17 +98,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
         public GameObject RequestInactiveTower(int towerID)
         {
-            GameObject selectedObj = null;// = _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
-            foreach (var tower in _towerPool)
-            {
-                if (tower.activeInHierarchy == false)
-                {
-                    if (tower.GetComponent<ITower>().TowerID == towerID)
-                    {
-                        selectedObj = tower;
-                    }
-                }
-            }
+            GameObject selectedObj= _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
 
             if (selectedObj == null)
             {
@@ -118,7 +108,9 @@ namespace GameDevHQ.Manager.PoolManagerNS
                     {
                         selectedObj = Instantiate(tower, _towerContainer.transform);
                         _towerPool.Add(selectedObj);
+                        selectedObj.SetActive(false);
                         Debug.Log("Created new Tower Prefab of Type: " + towerID);
+                        break;
                     }
                 }
                 return selectedObj;
