@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameDevHQ.FileBase.Gatling_Gun;
 using GameDevHQ.FileBase.Missile_Launcher;
+using GameDevHQ.Manager.UIManagerNS;
 
 namespace GameDevHQ.Tower.PlaceableAreaNS
 {
@@ -18,6 +19,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         private bool _inPlaceMode = false;
 
         public static event Action<bool> onCanPlaceHere;
+        //public static event Action<GameObject> onPlacedTowerSelected;
         public static event Func<int> onGetSelectedTowerID;
         public static event Func<int, GameObject> onRequestTower;
 
@@ -69,7 +71,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         {
             int selectedTowerID = -1;
 
-            if (_inPlaceMode == true)
+            if (_inPlaceMode == true && _canTakeTower == true)
             {
                 selectedTowerID = (int)(onGetSelectedTowerID?.Invoke());
 
@@ -84,7 +86,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
                 int towerCost = towerToPlace.GetComponent<ITower>().WarFundValue;
                 bool haveFunds = GameManager.Instance.CheckFunds(towerCost);
 
-                if (haveFunds && _canTakeTower == true)
+                if (haveFunds)
                 {                    
                     towerToPlace.transform.position = _particleObj.transform.position;
                     towerToPlace.SetActive(true);
@@ -102,6 +104,9 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
             else if(_placedTower != null)
             {
                 //Reserved for selecting placed tower and upgrading it.
+                Debug.Log("Upgrade Tower.");
+                //onPlacedTowerSelected?.Invoke(_placedTower);
+                UIManager.Instance.PlacedTowerSelected(_placedTower);
             }
         }
 

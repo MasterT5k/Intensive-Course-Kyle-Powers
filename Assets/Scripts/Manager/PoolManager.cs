@@ -98,7 +98,17 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
         public GameObject RequestInactiveTower(int towerID)
         {
-            GameObject selectedObj = _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
+            GameObject selectedObj = null;// = _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
+            foreach (var tower in _towerPool)
+            {
+                if (tower.activeInHierarchy == false)
+                {
+                    if (tower.GetComponent<ITower>().TowerID == towerID)
+                    {
+                        selectedObj = tower;
+                    }
+                }
+            }
 
             if (selectedObj == null)
             {

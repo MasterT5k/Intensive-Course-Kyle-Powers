@@ -3,6 +3,7 @@ using GameDevHQ.Interface.IHealthNS;
 using GameDevHQ.Interface.ITowerNS;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -29,6 +30,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected float _deathInactiveDelay = 5f;
         [SerializeField]
         protected Transform _hitTarget = null;
+        [SerializeField]
+        protected Transform _rotationObj = null;
 
         public static event Action<int> onDestroyed;
         public static event Action<GameObject> onHealthGone;
@@ -36,13 +39,16 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         public static event Func<Transform> onGetEndPoint;
 
         protected bool _towerInRange = false;
+        protected bool _isAlive = true;
         protected float _canFire = -1f;
         protected NavMeshAgent _agent;
         protected Animator _anim;
         protected Transform _endPoint;
         protected Collider _collider;
+        protected List<GameObject> _towersInRange = new List<GameObject>();
         protected GameObject _targetedTower;
         protected IHealth _towerHealth;
+        protected Quaternion _startRotation;
 
         public int StartingHealth { get; set; }
         public int Health { get; set; }
@@ -53,6 +59,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             _anim = GetComponent<Animator>();
             _collider = GetComponent<Collider>();
             StartingHealth = _startingHealth;
+            _startRotation = _rotationObj.localRotation;
 
             if (_agent == null)
             {
@@ -77,13 +84,13 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void OnEnable()
         {
-            Gatling_Gun.onDestroyed += TowerDestroyed;
+            Gatling_Gun.onDestroyed += RemoveTower;
             Activate();
         }
 
         public virtual void OnDisable()
         {
-            Gatling_Gun.onDestroyed -= TowerDestroyed;
+            Gatling_Gun.onDestroyed -= RemoveTower;
             onDisabled?.Invoke();
         }
 
@@ -91,11 +98,18 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         {
             if (_towerInRange == true)
             {
+                _rotationObj.LookAt(_targetedTower.transform, Vector3.up);
+
                 if (Time.time > _canFire)
                 {
+                    _anim.SetTrigger("Shoot");
                     _canFire = Time.time + _attackDelay;
                     _towerHealth.Damage(_damage);
                 }
+            }
+            else if (_towerInRange == false && _isAlive == true && _rotationObj.localRotation != _startRotation)
+            {
+                _rotationObj.localRotation = Quaternion.Lerp(_rotationObj.localRotation, _startRotation, 5f * Time.deltaTime);
             }
         }
 
@@ -125,6 +139,10 @@ namespace GameDevHQ.Enemy.EnemyClassNS
                 _agent.speed = _speed;
                 _agent.SetDestination(_endPoint.position);
             }
+            _isAlive = true;
+            _rotationObj.localRotation = _startRotation;
+            _towersInRange.Clear();
+            NoTowersInRange();
         }
 
         public virtual void Destroyed()
@@ -134,6 +152,9 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             _agent.enabled = false;
             _explosionPrefab.SetActive(true);
             _anim.SetTrigger("Destroyed");
+            _anim.SetBool("Target", false);
+            _isAlive = false;
+            NoTowersInRange();
             _collider.enabled = false;
             StartCoroutine(InactiveCoroutine(_deathInactiveDelay));
         }
@@ -153,9 +174,15 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             }
         }
 
-        public virtual void AttackTower()
+        private void AttackTower(GameObject tower)
         {
-
+            if (_targetedTower != tower || _targetedTower == null)
+            {
+                _targetedTower = tower;
+                _towerHealth = _targetedTower.GetComponent<IHealth>();
+            }
+            _towerInRange = true;
+            _anim.SetBool("Target", true);
         }
 
         public Transform GetHitTarget()
@@ -163,15 +190,27 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             return _hitTarget;
         }
 
-        public void TowerDestroyed(GameObject tower)
+        private void RemoveTower(GameObject tower)
         {
-            if (_targetedTower == tower)
+            _towersInRange.Remove(tower);
+            if (_towersInRange.Count > 0)
             {
-                _targetedTower = null;
-                _towerHealth = null;
-                _towerInRange = false;
-                Debug.Log("Tower Destroyed.");
+                AttackTower(_towersInRange[0]);
             }
+            else
+            {
+                NoTowersInRange();
+            }
+        }
+
+        private void NoTowersInRange()
+        {
+            _targetedTower = null;
+            _towerHealth = null;
+            _towerInRange = false;
+            _anim.ResetTrigger("Shoot");
+            _anim.SetBool("Target", false);
+            
         }
 
         protected IEnumerator InactiveCoroutine(float inactiveDelay)
@@ -186,14 +225,18 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         {
             if (other.CompareTag("Attack Range"))
             {
-                IHealth tower = other.GetComponentInParent<IHealth>();
+                GameObject tower = other.transform.parent.gameObject;
+                _towersInRange.Add(tower);
+                AttackTower(_towersInRange[0]);
+            }
+        }
 
-                if (tower != null)
-                {
-                    _targetedTower = other.transform.parent.gameObject;
-                    _towerHealth = tower;
-                    _towerInRange = true;
-                }
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Attack Range"))
+            {
+                GameObject tower = other.transform.parent.gameObject;
+                RemoveTower(tower);
             }
         }
     }
