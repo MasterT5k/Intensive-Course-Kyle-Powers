@@ -48,7 +48,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         [SerializeField]
         private int _warFundValue = 0;
         [SerializeField]
-        private int _towerID = -1;
+        private int _towerID = 1;
         [SerializeField]
         private int _startingHealth = 1;
         [SerializeField]
@@ -201,6 +201,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             if (EnemyToTarget != enemy || EnemyToTarget == null)
             {
                 EnemyToTarget = enemy;
+                _target = EnemyToTarget.GetComponent<EnemyClass>().GetHitTarget();
                 TargetHealth = EnemyToTarget.GetComponent<IHealth>();
             }
             IsEnemyInRange = true;
@@ -209,6 +210,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         public void NoEnemiesInRange()
         {
             EnemyToTarget = null;
+            _target = null;
             TargetHealth = null;
             IsEnemyInRange = false;
         }

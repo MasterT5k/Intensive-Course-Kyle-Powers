@@ -38,7 +38,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         [SerializeField]
         private int _warFundValue = 0;
         [SerializeField]
-        private int _towerID = -1;
+        private int _towerID = 2;
         [SerializeField]
         private int _startingHealth = 1;
         [SerializeField]
@@ -71,6 +71,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
             EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
             Health = StartingHealth;
+            AttackRange.enabled = false;
             EnemiesInRange.Clear();
             NoEnemiesInRange();
         }
@@ -91,7 +92,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         {
             for (int i = 0; i < _muzzleFlash.Length; i++)
             {
-                _muzzleFlash[i].SetActive(true);
+                _muzzleFlash[i].SetActive(false);
             }
             _audioSource = GetComponent<AudioSource>();
             _audioSource.playOnAwake = false;

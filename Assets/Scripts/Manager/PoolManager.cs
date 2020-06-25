@@ -98,7 +98,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
         public GameObject RequestInactiveTower(int towerID)
         {
-            GameObject selectedObj= _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
+            GameObject selectedObj = _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
 
             if (selectedObj == null)
             {
@@ -119,6 +119,24 @@ namespace GameDevHQ.Manager.PoolManagerNS
             {
                 return selectedObj;
             }
+        }
+
+        public int GetTowerCost(int towerID)
+        {
+            int towerCost = 0;
+
+            for (int i = 0; i < _towerPool.Count; i++)
+            {
+                ITower tower = _towerPool[i].GetComponent<ITower>();
+                if (tower.TowerID == towerID)
+                {
+                    towerCost = tower.WarFundValue;
+
+                    Debug.Log(towerID);
+                    break;
+                }
+            }
+            return towerCost;
         }
     }
 }

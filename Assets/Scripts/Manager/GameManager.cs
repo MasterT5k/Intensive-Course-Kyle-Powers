@@ -1,16 +1,19 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Manager.UIManagerNS;
 using GameDevHQ.Other.MonoSingletonNS;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameDevHQ.Manager.GameManager
+namespace GameDevHQ.Manager.GameManagerNS
 {
     public class GameManager : MonoSingleton<GameManager>
     {
         [SerializeField]
         private int _startingWarFunds = 0;
+        [SerializeField]
+        private float _refundPercent = 0.75f;
         private int _currentWarFunds;
 
         private void OnEnable()
@@ -46,6 +49,14 @@ namespace GameDevHQ.Manager.GameManager
         private void EnemyDestroyed(int currencyValue)
         {
             ChangeFunds(currencyValue, true);
+        }
+
+        public void TowerDismantled(GameObject tower)
+        {
+            int towerCost = tower.GetComponent<ITower>().WarFundValue;
+            int refund = Mathf.RoundToInt(towerCost * _refundPercent);
+            ChangeFunds(refund, true);
+            tower.SetActive(false);
         }
 
         public bool CheckFunds(int cost)

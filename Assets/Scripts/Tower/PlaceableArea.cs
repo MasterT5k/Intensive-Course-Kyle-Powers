@@ -1,4 +1,4 @@
-﻿using GameDevHQ.Manager.GameManager;
+﻿using GameDevHQ.Manager.GameManagerNS;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Tower.TowerPlacementNS;
 using System;
@@ -8,6 +8,8 @@ using UnityEngine;
 using GameDevHQ.FileBase.Gatling_Gun;
 using GameDevHQ.FileBase.Missile_Launcher;
 using GameDevHQ.Manager.UIManagerNS;
+using GameDevHQ.FileBase.Dual_Gatling_Gun;
+using GameDevHQ.FileBase.Missle_Launcher_Dual_Turret;
 
 namespace GameDevHQ.Tower.PlaceableAreaNS
 {
@@ -28,6 +30,9 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
             TowerPlacement.onSelectTower += PlaceMode;
             Gatling_Gun.onDestroyed += RemoveTower;
             Missile_Launcher.onDestroyed += RemoveTower;
+            Dual_Gatling_Gun.onDestroyed += RemoveTower;
+            Missle_Launcher.onDestroyed += RemoveTower;
+            UIManager.onUpgradeButtonClick += PlaceTower;
         }
 
         private void OnDisable()
@@ -35,6 +40,9 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
             TowerPlacement.onSelectTower -= PlaceMode;
             Gatling_Gun.onDestroyed -= RemoveTower;
             Missile_Launcher.onDestroyed -= RemoveTower;
+            Dual_Gatling_Gun.onDestroyed -= RemoveTower;
+            Missle_Launcher.onDestroyed -= RemoveTower;
+            UIManager.onUpgradeButtonClick -= PlaceTower;
         }
 
         void Start()
@@ -69,44 +77,60 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
 
         private void OnMouseDown()
         {
-            int selectedTowerID = -1;
-
             if (_inPlaceMode == true && _canTakeTower == true)
             {
-                selectedTowerID = (int)(onGetSelectedTowerID?.Invoke());
-
-                if (selectedTowerID < 0)
-                {
-                    Debug.Log("Select a Tower to place.");
-                    return;
-                }
-
-                GameObject towerToPlace;
-                towerToPlace = onRequestTower?.Invoke(selectedTowerID);
-                int towerCost = towerToPlace.GetComponent<ITower>().WarFundValue;
-                bool haveFunds = GameManager.Instance.CheckFunds(towerCost);
-
-                if (haveFunds)
-                {                    
-                    towerToPlace.transform.position = _particleObj.transform.position;
-                    towerToPlace.SetActive(true);
-                    _placedTower = towerToPlace;
-                    _canTakeTower = false;
-                    _particleObj.SetActive(false);
-                    onCanPlaceHere?.Invoke(_canTakeTower);
-                    GameManager.Instance.ChangeFunds(towerCost, false);
-                }
-                else
-                {
-                    Debug.Log("Not enough in the War Fund to build Tower.");
-                }
+                int towerID = (int)(onGetSelectedTowerID?.Invoke());
+                PlaceTower(towerID);
             }
-            else if(_placedTower != null)
+            else if (_inPlaceMode == false)
             {
-                //Reserved for selecting placed tower and upgrading it.
                 Debug.Log("Upgrade Tower.");
                 //onPlacedTowerSelected?.Invoke(_placedTower);
                 UIManager.Instance.PlacedTowerSelected(_placedTower);
+            }
+        }
+
+        private void PlaceTower(int selectedTowerID, GameObject tower = null)
+        {
+            if (selectedTowerID < 0)
+            {
+                Debug.Log("Select a Tower to place.");
+                return;
+            }
+
+            if (tower != null)
+            {
+                if (_placedTower != tower)
+                {
+                    Debug.Log("Not It!");
+                    return;
+                }
+            }
+
+            GameObject towerToPlace;
+            towerToPlace = onRequestTower?.Invoke(selectedTowerID);
+            Debug.Log(towerToPlace.name);
+            int towerCost = towerToPlace.GetComponent<ITower>().WarFundValue;
+            bool haveFunds = GameManager.Instance.CheckFunds(towerCost);
+
+            if (haveFunds)
+            {
+                towerToPlace.transform.position = _particleObj.transform.position;
+                towerToPlace.SetActive(true);
+                if (_placedTower != null)
+                {
+                    _placedTower.SetActive(false);
+                    UIManager.Instance.ClearSelection();
+                }
+                _placedTower = towerToPlace;
+                _canTakeTower = false;
+                _particleObj.SetActive(false);
+                onCanPlaceHere?.Invoke(_canTakeTower);
+                GameManager.Instance.ChangeFunds(towerCost, false);
+            }
+            else
+            {
+                Debug.Log("Not enough in the War Fund to build Tower.");
             }
         }
 
@@ -132,6 +156,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         {
             if (_placedTower == tower)
             {
+                Debug.Log("Aww man.");
                 _placedTower = null;
                 _canTakeTower = true;
 

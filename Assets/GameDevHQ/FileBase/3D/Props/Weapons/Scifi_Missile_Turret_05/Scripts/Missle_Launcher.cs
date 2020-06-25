@@ -45,7 +45,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         [SerializeField]
         private int _warFundValue = 0;
         [SerializeField]
-        private int _towerID = -1;
+        private int _towerID = 3;
         [SerializeField]
         private int _startingHealth = 1;
         [SerializeField]
@@ -75,6 +75,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
             Health = StartingHealth;
+            AttackRange.enabled = false;
             EnemiesInRange.Clear();
             NoEnemiesInRange();
         }
@@ -209,6 +210,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             if (EnemyToTarget != enemy || EnemyToTarget == null)
             {
                 EnemyToTarget = enemy;
+                _target = EnemyToTarget.GetComponent<EnemyClass>().GetHitTarget();
                 TargetHealth = EnemyToTarget.GetComponent<IHealth>();
             }
             IsEnemyInRange = true;
@@ -217,6 +219,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         public void NoEnemiesInRange()
         {
             EnemyToTarget = null;
+            _target = null;
             TargetHealth = null;
             IsEnemyInRange = false;
         }
