@@ -38,7 +38,7 @@ namespace GameDevHQ.FileBase.Dual_Gatling_Gun
         [SerializeField]
         private int _warFundValue = 0;
         [SerializeField]
-        private int _towerID = 2;
+        private int _towerID = -1;
         [SerializeField]
         private int _startingHealth = 1;
         [SerializeField]

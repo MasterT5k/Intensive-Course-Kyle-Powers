@@ -48,7 +48,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         [SerializeField]
         private int _warFundValue = 0;
         [SerializeField]
-        private int _towerID = 1;
+        private int _towerID = -1;
         [SerializeField]
         private int _startingHealth = 1;
         [SerializeField]

@@ -44,6 +44,11 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
             _enemyPool = GenerateEnemies(baseSpawnCount, numberOfWaves);
             _towerPool = GenerateTowers(_baseNumberOfEachType);
+
+            foreach (var tower in _towerPrefabs)
+            {
+                tower.GetComponent<ITower>().Init();
+            }
         }
 
         List<GameObject> GenerateEnemies(int baseSpawnCount, int numberOfWaves)
@@ -98,6 +103,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
         public GameObject RequestInactiveTower(int towerID)
         {
+            Debug.Log("Requested Tower ID: " + towerID);
             GameObject selectedObj = _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
 
             if (selectedObj == null)

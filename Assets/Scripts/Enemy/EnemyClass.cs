@@ -216,8 +216,10 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected IEnumerator InactiveCoroutine(float inactiveDelay)
         {
             yield return new WaitForSeconds(inactiveDelay);
-            _anim.Rebind();
+            _anim.SetTrigger("Fade");
             _explosionPrefab.SetActive(false);
+            yield return new WaitForSeconds(2f);
+            _anim.Rebind();
             gameObject.SetActive(false);
         }
 
