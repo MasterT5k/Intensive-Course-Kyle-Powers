@@ -103,7 +103,6 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
         public GameObject RequestInactiveTower(int towerID)
         {
-            Debug.Log("Requested Tower ID: " + towerID);
             GameObject selectedObj = _towerPool.FirstOrDefault((tower) => (tower.activeInHierarchy == false && tower.GetComponent<ITower>().TowerID == towerID));
 
             if (selectedObj == null)

@@ -21,7 +21,6 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         private bool _inPlaceMode = false;
 
         public static event Action<bool> onCanPlaceHere;
-        //public static event Action<GameObject> onPlacedTowerSelected;
         public static event Func<int> onGetSelectedTowerID;
         public static event Func<int, GameObject> onRequestTower;
 
@@ -85,7 +84,6 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
             else if (_inPlaceMode == false)
             {
                 Debug.Log("Upgrade Tower.");
-                //onPlacedTowerSelected?.Invoke(_placedTower);
                 UIManager.Instance.PlacedTowerSelected(_placedTower);
             }
         }
@@ -102,7 +100,6 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
             {
                 if (_placedTower != tower)
                 {
-                    Debug.Log("Not It!");
                     return;
                 }
             }
@@ -156,7 +153,6 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
         {
             if (_placedTower == tower)
             {
-                Debug.Log("Aww man.");
                 _placedTower = null;
                 _canTakeTower = true;
 
