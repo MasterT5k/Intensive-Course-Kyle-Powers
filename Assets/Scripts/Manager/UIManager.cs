@@ -26,6 +26,12 @@ namespace GameDevHQ.Manager.UIManagerNS
         private GameObject _dismantleWeapon = null;
         [SerializeField]
         private Text _dismantleFunds = null;
+        [SerializeField]
+        private Button _galtingButton = null;
+        private Text _gatlingCost;
+        [SerializeField]
+        private Button _missileButton = null;
+        private Text _missileCost;
         private bool _towerSelected;
         private GameObject _selectedTower;
 
@@ -47,11 +53,33 @@ namespace GameDevHQ.Manager.UIManagerNS
             _gunUpgrade.SetActive(false);
             _missileUpgrade.SetActive(false);
             _dismantleWeapon.SetActive(false);
+
+            if (_galtingButton != null)
+            {
+                _gatlingCost = _galtingButton.GetComponentInChildren<Text>();
+            }
+
+            if (_missileButton != null)
+            {
+                _missileCost = _missileButton.GetComponentInChildren<Text>();
+            }
         }
 
         public void SetWarFundText(int warFunds)
         {
             _fundsText.text = warFunds.ToString();
+        }
+
+        public void SetBaseTowerCosts(int towerID, int towerCost)
+        {
+            if (towerID == 0)
+            {
+                _gatlingCost.text = "$" + towerCost;
+            }
+            else if (towerID == 1)
+            {
+                _missileCost.text = "$" + towerCost;
+            }            
         }
 
         public void TowerButtonClick(int selectedTower)
