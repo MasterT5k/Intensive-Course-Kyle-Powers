@@ -1,4 +1,5 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Manager.GameManagerNS;
 using GameDevHQ.Manager.UIManagerNS;
 using GameDevHQ.Other.MonoSingletonNS;
 using System;
@@ -25,6 +26,7 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         private int _activeEnemies = 0;
         private bool _wavesDone = false;
         private bool _firstWave = true;
+        private bool _spawning = false;
 
         public static event Func<GameObject> onGetEnemy;
 
@@ -40,13 +42,25 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             EnemyClass.onGetEndPoint -= GetEndPoint;
         }
 
-        private void Start()
+        //private void Start()
+        //{
+        //    StartCoroutine(SpawnCoroutine());
+        //}
+
+        public void StartSpawn()
         {
             StartCoroutine(SpawnCoroutine());
         }
 
         private IEnumerator SpawnCoroutine()
         {
+            if (_spawning == true)
+            {
+                yield break;
+            }
+
+            _spawning = true;
+
             int amountToSpawn = _baseSpawnCount * _currentWave;
             _spawnedEnemies = 0;
 
@@ -82,6 +96,8 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             {
                 _wavesDone = true;
             }
+
+            _spawning = false;
         }
 
         public void Despawn()
@@ -97,11 +113,11 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             {
                 if (_wavesDone == true)
                 {
-
+                    GameManager.Instance.WaveComplete(true);
                     return;
                 }
-
-                StartCoroutine(SpawnCoroutine());
+                GameManager.Instance.WaveComplete(false);
+                //StartCoroutine(SpawnCoroutine());
             }
         }
 

@@ -22,6 +22,10 @@ namespace GameDevHQ.Manager.UIManagerNS
         [SerializeField]
         private Text _waveCount = null;
         [SerializeField]
+        private Text _versionText = null;
+        [SerializeField]
+        private string _versionNumber = "v0.1";
+        [SerializeField]
         private GameObject _levelStatus = null;
         [SerializeField]
         private Text _levelStatusText = null;
@@ -161,6 +165,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             }
 
             _playButton.sprite = _playActiveSprite;
+            _versionText.text = _versionNumber;
         }
 
         public void SetWarFundText(int warFunds)

@@ -3900,6 +3900,8 @@ MonoBehaviour:
   _livesCount: {fileID: 783571177}
   _statusText: {fileID: 254106825}
   _waveCount: {fileID: 640746102}
+  _versionText: {fileID: 1367709903}
+  _versionNumber: v0.1
   _levelStatus: {fileID: 909662579}
   _levelStatusText: {fileID: 12562996}
   _gunUpgrade: {fileID: 1364565713}
@@ -9799,6 +9801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b292baefeb5cba48aa6a93ab1095bad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _startingLives: 100
   _startingWarFunds: 1000
   _refundPercent: 0.75
 --- !u!4 &1495135275

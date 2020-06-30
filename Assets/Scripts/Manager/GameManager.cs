@@ -1,6 +1,7 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
 using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Manager.PoolManagerNS;
+using GameDevHQ.Manager.SpawnManagerNS;
 using GameDevHQ.Manager.UIManagerNS;
 using GameDevHQ.Other.MonoSingletonNS;
 using System.Collections;
@@ -41,6 +42,7 @@ namespace GameDevHQ.Manager.GameManagerNS
             UIManager.Instance.SetLivesCount(_currentLives);
             UIManager.Instance.SetWarFundText(_currentWarFunds);
             ChangeTowerButtonCosts();
+            StartCoroutine(WaveComplete());
         }
 
         public void ChangeFunds(int amount, bool addFunds)
@@ -128,6 +130,12 @@ namespace GameDevHQ.Manager.GameManagerNS
         public void RestartLevel()
         {
             SceneManager.LoadScene(0);
+        }
+
+        public IEnumerator WaveComplete(bool wavesDone = false)
+        {
+            yield return new WaitForSeconds(5f);
+            SpawnManager.Instance.StartSpawn();
         }
     }
 }
