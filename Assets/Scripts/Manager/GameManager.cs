@@ -1,5 +1,6 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
 using GameDevHQ.Interface.ITowerNS;
+using GameDevHQ.Manager.PoolManagerNS;
 using GameDevHQ.Manager.UIManagerNS;
 using GameDevHQ.Other.MonoSingletonNS;
 using System.Collections;
@@ -31,6 +32,7 @@ namespace GameDevHQ.Manager.GameManagerNS
         {
             _currentWarFunds = _startingWarFunds;
             UIManager.Instance.SetWarFundText(_currentWarFunds);
+            ChangeTowerButtonCosts();
         }
 
         public void ChangeFunds(int amount, bool addFunds)
@@ -69,6 +71,15 @@ namespace GameDevHQ.Manager.GameManagerNS
             {
                 return false;
             }
+        }
+
+        public void ChangeTowerButtonCosts()
+        {
+            int towerCost = PoolManager.Instance.GetTowerCost(0);
+            UIManager.Instance.SetBaseTowerCosts(0, towerCost);
+
+            towerCost = PoolManager.Instance.GetTowerCost(1);
+            UIManager.Instance.SetBaseTowerCosts(1, towerCost);
         }
     }
 }

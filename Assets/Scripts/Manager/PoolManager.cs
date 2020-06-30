@@ -136,8 +136,6 @@ namespace GameDevHQ.Manager.PoolManagerNS
                 if (tower.TowerID == towerID)
                 {
                     towerCost = tower.WarFundValue;
-
-                    Debug.Log(towerID);
                     break;
                 }
             }

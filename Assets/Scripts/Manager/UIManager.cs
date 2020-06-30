@@ -12,12 +12,17 @@ namespace GameDevHQ.Manager.UIManagerNS
 {
     public class UIManager : MonoSingleton<UIManager>
     {
+        [Header("Stats Fields")]
         [SerializeField]
         private Text _fundsText = null;
         [SerializeField]
+        private Text _statusText = null;
+
+        [Header("Tower Fields")]
+        [SerializeField]
         private GameObject _gunUpgrade = null;
         [SerializeField]
-        private Text _gunFunds = null;
+        private Text _gatlingFunds = null;
         [SerializeField]
         private GameObject _missileUpgrade = null;
         [SerializeField]
@@ -32,21 +37,64 @@ namespace GameDevHQ.Manager.UIManagerNS
         [SerializeField]
         private Button _missileButton = null;
         private Text _missileCost;
+
+        [Header("Playback Fields")]
+        [SerializeField]
+        private Image _pauseButton = null;
+        private Sprite _pauseNormalSprite = null;
+        [SerializeField]
+        private Sprite _pauseActiveSprite = null;
+        [SerializeField]
+        private Image _playButton = null;
+        private Sprite _playNormalSprite;
+        [SerializeField]
+        private Sprite _playActiveSprite = null;
+        [SerializeField]
+        private Image _fastForwardButton = null;
+        private Sprite _fastForwardNormalSprite;
+        [SerializeField]
+        private Sprite _fastForwardActiveSprite = null;
+        [SerializeField]
+        private Image _restartButton = null;
+        [SerializeField]
+        private Sprite _restartPressedSprite = null;
+
+        [Header("UI Background")]
+        [SerializeField]
+        private Image _armoryImage = null;
+        private Sprite _armoryNormalSprite;
+        [SerializeField]
+        private Sprite _armoryCautionSprite = null;
+        [SerializeField]
+        private Sprite _armoryWarningSprite = null;
+        [SerializeField]
+        private Image _playbackImage = null;
+        private Sprite _playbackNormalSprite;
+        [SerializeField]
+        private Sprite _playbackCautionSprite = null;
+        [SerializeField]
+        private Sprite _playbackWarningSprite = null;
+        [SerializeField]
+        private Image _restartImage = null;
+        private Sprite _restartNormalSprite;
+        [SerializeField]
+        private Sprite _restartCautionSprite = null;
+        [SerializeField]
+        private Sprite _restartWarningSprite = null;
+        [SerializeField]
+        private Image _warFundsImage = null;
+        private Sprite _warFundsNormalSprite;
+        [SerializeField]
+        private Sprite _warFundsCautionSprite = null;
+        [SerializeField]
+        private Sprite _warFundsWarningSprite = null;
+
         private bool _towerSelected;
         private GameObject _selectedTower;
+        private int _upgradeCost;
 
         public static event Action<int> onTowerButtonClick;
         public static event Action<int, GameObject> onUpgradeButtonClick;
-
-        private void OnEnable()
-        {
-            
-        }
-
-        private void OnDisable()
-        {
-            
-        }
 
         private void Start()
         {
@@ -55,14 +103,33 @@ namespace GameDevHQ.Manager.UIManagerNS
             _dismantleWeapon.SetActive(false);
 
             if (_galtingButton != null)
-            {
                 _gatlingCost = _galtingButton.GetComponentInChildren<Text>();
-            }
 
             if (_missileButton != null)
-            {
                 _missileCost = _missileButton.GetComponentInChildren<Text>();
-            }
+
+            if (_pauseButton != null)
+                _pauseNormalSprite = _pauseButton.sprite;
+
+            if (_playButton != null)
+                _playNormalSprite = _playButton.sprite;
+
+            if (_fastForwardButton != null)
+                _fastForwardNormalSprite = _fastForwardButton.sprite;
+
+            if (_armoryImage != null)
+                _armoryNormalSprite = _armoryImage.sprite;
+
+            if (_playbackImage != null)
+                _playbackNormalSprite = _playbackImage.sprite;
+
+            if (_restartImage != null)
+                _restartNormalSprite = _restartImage.sprite;
+
+            if (_warFundsImage != null)
+                _warFundsNormalSprite = _warFundsImage.sprite;
+
+            _playButton.sprite = _playActiveSprite;
         }
 
         public void SetWarFundText(int warFunds)
@@ -79,7 +146,11 @@ namespace GameDevHQ.Manager.UIManagerNS
             else if (towerID == 1)
             {
                 _missileCost.text = "$" + towerCost;
-            }            
+            }
+            else
+            {
+                Debug.Log("No Button Cost to Update.");
+            }
         }
 
         public void TowerButtonClick(int selectedTower)
@@ -96,24 +167,34 @@ namespace GameDevHQ.Manager.UIManagerNS
             }
 
             _selectedTower = selectedTower;
+            if (_selectedTower == null)
+            {
+                Debug.Log("Selected Tower is NULL");
+            }
             ITower tower = _selectedTower.GetComponent<ITower>();
             int towerID = tower.TowerID;
 
             switch (towerID)
             {
                 case 0:
-                    _towerSelected = true;
-                    _gunUpgrade.SetActive(true);
-                    UpdateFunds(_gunFunds, 2);
-                    _dismantleWeapon.SetActive(true);
+                    UpdateFunds(_gatlingFunds, 2);
                     UpdateFunds(_dismantleFunds, towerID);
+                    if (GameManager.Instance.CheckFunds(_upgradeCost) == true)
+                    {
+                        _towerSelected = true;
+                        _gunUpgrade.SetActive(true);
+                    }
+                    _dismantleWeapon.SetActive(true);
                     break;
-                case 1:
-                    _towerSelected = true;
-                    _missileUpgrade.SetActive(true);
+                case 1:                    
                     UpdateFunds(_missileFunds, 3);
+                    UpdateFunds(_dismantleFunds, towerID); 
+                    if (GameManager.Instance.CheckFunds(_upgradeCost) == true)
+                    {
+                        _towerSelected = true;
+                        _missileUpgrade.SetActive(true);
+                    }
                     _dismantleWeapon.SetActive(true);
-                    UpdateFunds(_dismantleFunds, towerID);
                     break;
                 default:
                     Debug.Log("Tower can't be Upgraded.");
@@ -160,6 +241,10 @@ namespace GameDevHQ.Manager.UIManagerNS
         {
             int amount = PoolManager.Instance.GetTowerCost(towerID);
             funds.text = amount.ToString();
+            if (towerID > 1)
+            {
+                _upgradeCost = amount;
+            }
         }
 
         public void ClearSelection()
@@ -169,6 +254,54 @@ namespace GameDevHQ.Manager.UIManagerNS
             _gunUpgrade.SetActive(false);
             _missileUpgrade.SetActive(false);
             _dismantleWeapon.SetActive(false);
+        }
+
+        public void PlayBackButtonClick(int speed)
+        {
+            switch (speed)
+            {
+                case 0:
+                    if (Time.timeScale != speed)
+                    {
+                        _pauseButton.sprite = _pauseActiveSprite;
+                        _playButton.sprite = _playNormalSprite;
+                        _fastForwardButton.sprite = _fastForwardNormalSprite;
+                        Time.timeScale = speed;
+                    }
+                    else
+                    {
+                        Debug.Log("Already in Pause Mode.");
+                    }
+                    break;
+                case 1:
+                    if (Time.timeScale != speed)
+                    {
+                        _pauseButton.sprite = _pauseNormalSprite;
+                        _playButton.sprite = _playActiveSprite;
+                        _fastForwardButton.sprite = _fastForwardNormalSprite;
+                        Time.timeScale = speed;
+                    }
+                    else
+                    {
+                        Debug.Log("Already in Play Mode.");
+                    }
+                    break;
+                case 2:
+                    if (Time.timeScale != speed)
+                    {
+                        _pauseButton.sprite = _pauseNormalSprite;
+                        _playButton.sprite = _playNormalSprite;
+                        _fastForwardButton.sprite = _fastForwardActiveSprite;
+                        Time.timeScale = speed;
+                    }
+                    else
+                    {
+                        Debug.Log("Already in FastForward Mode.");
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
