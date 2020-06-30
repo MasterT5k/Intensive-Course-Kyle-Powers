@@ -2919,6 +2919,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 1.5
   _startingHealth: 5
+  _livesCost: 5
   _currencyValue: 100
   _damage: 1
   _attackDelay: 1

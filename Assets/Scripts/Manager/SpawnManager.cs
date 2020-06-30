@@ -1,4 +1,5 @@
 ﻿using GameDevHQ.Enemy.EnemyClassNS;
+using GameDevHQ.Manager.UIManagerNS;
 using GameDevHQ.Other.MonoSingletonNS;
 using System;
 using System.Collections;
@@ -49,6 +50,8 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             int amountToSpawn = _baseSpawnCount * _currentWave;
             _spawnedEnemies = 0;
 
+            SendWaveInfo(_currentWave, _numberOfWaves);
+
             while (_spawnedEnemies < amountToSpawn)
             {
                 _spawnedEnemies++;
@@ -94,6 +97,7 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             {
                 if (_wavesDone == true)
                 {
+
                     return;
                 }
 
@@ -114,6 +118,11 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         public int GetNumberOfWaves()
         {
             return _numberOfWaves;
+        }
+
+        public void SendWaveInfo(int currentWave, int numberOfWaves)
+        {
+            UIManager.Instance.UpdateWaveCount(currentWave, numberOfWaves);
         }
     }
 }

@@ -6,31 +6,39 @@ using GameDevHQ.Other.MonoSingletonNS;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GameDevHQ.Manager.GameManagerNS
 {
     public class GameManager : MonoSingleton<GameManager>
     {
         [SerializeField]
+        private int _startingLives = 100;
+        [SerializeField]
         private int _startingWarFunds = 0;
         [SerializeField]
         private float _refundPercent = 0.75f;
+        private int _currentLives;
         private int _currentWarFunds;
 
         private void OnEnable()
         {
             EnemyClass.onDestroyed += EnemyDestroyed;
+            EnemyClass.onReachedEnd += EnemyReachedEnd;
         }
 
         private void OnDisable()
         {
             EnemyClass.onDestroyed -= EnemyDestroyed;
+            EnemyClass.onReachedEnd -= EnemyReachedEnd;
         }
 
         // Start is called before the first frame update
         void Start()
         {
+            _currentLives = _startingLives;
             _currentWarFunds = _startingWarFunds;
+            UIManager.Instance.SetLivesCount(_currentLives);
             UIManager.Instance.SetWarFundText(_currentWarFunds);
             ChangeTowerButtonCosts();
         }
@@ -51,6 +59,11 @@ namespace GameDevHQ.Manager.GameManagerNS
         private void EnemyDestroyed(int currencyValue)
         {
             ChangeFunds(currencyValue, true);
+        }
+
+        private void EnemyReachedEnd(int livesCost)
+        {
+            ChangeLives(livesCost, false);
         }
 
         public void TowerDismantled(GameObject tower)
@@ -80,6 +93,41 @@ namespace GameDevHQ.Manager.GameManagerNS
 
             towerCost = PoolManager.Instance.GetTowerCost(1);
             UIManager.Instance.SetBaseTowerCosts(1, towerCost);
+        }
+
+        public void ChangeLives(int amount, bool addLives)
+        {
+            if (addLives == true)
+            {
+                _currentLives += amount;
+            }
+            else
+            {
+                _currentLives -= amount;
+                if (_currentLives < 1)
+                {
+                    _currentLives = 0;
+                    LevelFinished();
+                }
+                UIManager.Instance.UpdateLivesUI(_currentLives);
+            }
+        }
+
+        public void LevelFinished()
+        {
+            if (_currentLives > 0)
+            {
+                UIManager.Instance.LevelEnd(true);
+            }
+            else
+            {
+                UIManager.Instance.LevelEnd(false);
+            }
+        }
+
+        public void RestartLevel()
+        {
+            SceneManager.LoadScene(0);
         }
     }
 }

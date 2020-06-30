@@ -3897,7 +3897,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fundsText: {fileID: 2109062355}
+  _livesCount: {fileID: 783571177}
   _statusText: {fileID: 254106825}
+  _waveCount: {fileID: 640746102}
+  _levelStatus: {fileID: 909662579}
+  _levelStatusText: {fileID: 12562996}
   _gunUpgrade: {fileID: 1364565713}
   _gatlingFunds: {fileID: 1872218051}
   _missileUpgrade: {fileID: 46770128}
@@ -3917,9 +3921,18 @@ MonoBehaviour:
   _restartPressedSprite: {fileID: 21300000, guid: 2e44de290e7214346ab9da4605eb1bba,
     type: 3}
   _armoryImage: {fileID: 1706649507}
-  _armoryCautionSprite: {fileID: 21300000, guid: 65e0e0a1bf8a8f349ad889b5547df4d8,
+  _armoryCautionSprite: {fileID: 21300000, guid: e0013fc1308e040439553ef0f339bf53,
     type: 3}
-  _armoryWarningSprite: {fileID: 21300000, guid: 8d77842aa4717234d894b73a2fd8afb3,
+  _armoryWarningSprite: {fileID: 21300000, guid: ca25a72581df75c4b94c05987eb1a18a,
+    type: 3}
+  _levelStatusCautionSprite: {fileID: 21300000, guid: a777236ab75ae88499f6cdbaf9ff0c59,
+    type: 3}
+  _levelStatusWarningSprite: {fileID: 21300000, guid: f0f4cdc59cef57643a01e1c2d9d32605,
+    type: 3}
+  _livesWaveImage: {fileID: 2105959597}
+  _livesWaveCautionSprite: {fileID: 21300000, guid: 2db333e79395f6941b153d795482469c,
+    type: 3}
+  _livesWaveWarningSprite: {fileID: 21300000, guid: 28c72abd16b53994c855dcf49bf4f526,
     type: 3}
   _playbackImage: {fileID: 1353408165}
   _playbackCautionSprite: {fileID: 21300000, guid: 65e0e0a1bf8a8f349ad889b5547df4d8,
@@ -5310,7 +5323,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &909662580
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8155,7 +8168,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1322914651}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 592720673}
+        m_MethodName: RestartButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1322914651
 MonoBehaviour:
   m_ObjectHideFlags: 0

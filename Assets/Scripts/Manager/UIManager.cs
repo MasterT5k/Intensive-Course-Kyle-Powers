@@ -16,7 +16,15 @@ namespace GameDevHQ.Manager.UIManagerNS
         [SerializeField]
         private Text _fundsText = null;
         [SerializeField]
+        private Text _livesCount = null;
+        [SerializeField]
         private Text _statusText = null;
+        [SerializeField]
+        private Text _waveCount = null;
+        [SerializeField]
+        private GameObject _levelStatus = null;
+        [SerializeField]
+        private Text _levelStatusText = null;
 
         [Header("Tower Fields")]
         [SerializeField]
@@ -67,6 +75,19 @@ namespace GameDevHQ.Manager.UIManagerNS
         private Sprite _armoryCautionSprite = null;
         [SerializeField]
         private Sprite _armoryWarningSprite = null;
+        private Image _levelStatusImage;
+        private Sprite _levelStatusNormalSprite;
+        [SerializeField]
+        private Sprite _levelStatusCautionSprite = null;
+        [SerializeField]
+        private Sprite _levelStatusWarningSprite = null;
+        [SerializeField]
+        private Image _livesWaveImage = null;
+        private Sprite _livesWaveNormalSprite;
+        [SerializeField]
+        private Sprite _livesWaveCautionSprite = null;
+        [SerializeField]
+        private Sprite _livesWaveWarningSprite = null;
         [SerializeField]
         private Image _playbackImage = null;
         private Sprite _playbackNormalSprite;
@@ -101,6 +122,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             _gunUpgrade.SetActive(false);
             _missileUpgrade.SetActive(false);
             _dismantleWeapon.SetActive(false);
+            _levelStatus.SetActive(false);
 
             if (_galtingButton != null)
                 _gatlingCost = _galtingButton.GetComponentInChildren<Text>();
@@ -120,6 +142,9 @@ namespace GameDevHQ.Manager.UIManagerNS
             if (_armoryImage != null)
                 _armoryNormalSprite = _armoryImage.sprite;
 
+            if (_livesWaveImage != null)
+                _livesWaveNormalSprite = _livesWaveImage.sprite;
+
             if (_playbackImage != null)
                 _playbackNormalSprite = _playbackImage.sprite;
 
@@ -129,12 +154,28 @@ namespace GameDevHQ.Manager.UIManagerNS
             if (_warFundsImage != null)
                 _warFundsNormalSprite = _warFundsImage.sprite;
 
+            if (_levelStatus != null)
+            {
+                _levelStatusImage = _levelStatus.GetComponent<Image>();
+                _levelStatusNormalSprite = _levelStatusImage.sprite;
+            }
+
             _playButton.sprite = _playActiveSprite;
         }
 
         public void SetWarFundText(int warFunds)
         {
             _fundsText.text = warFunds.ToString();
+        }
+
+        public void SetLivesCount(int lives)
+        {
+            _livesCount.text = lives.ToString();
+        }
+
+        public void SetWaveCount(int currentWave, int totalWaves)
+        {
+            _waveCount.text = currentWave + "/" + totalWaves;
         }
 
         public void SetBaseTowerCosts(int towerID, int towerCost)
@@ -302,6 +343,67 @@ namespace GameDevHQ.Manager.UIManagerNS
                 default:
                     break;
             }
+        }
+
+        public void UpdateLivesUI(int lives)
+        {
+            _livesCount.text = lives.ToString();
+
+            if (lives > 60)
+            {
+                _armoryImage.sprite = _armoryNormalSprite;
+                _levelStatusImage.sprite = _levelStatusNormalSprite;
+                _livesWaveImage.sprite = _livesWaveNormalSprite;
+                _playbackImage.sprite = _playbackNormalSprite;
+                _restartImage.sprite = _restartNormalSprite;
+                _warFundsImage.sprite = _warFundsNormalSprite;
+                _statusText.text = "Good";
+            }
+            else if (lives > 20)
+            {
+                _armoryImage.sprite = _armoryCautionSprite;
+                _levelStatusImage.sprite = _levelStatusCautionSprite;
+                _livesWaveImage.sprite = _livesWaveCautionSprite;
+                _playbackImage.sprite = _playbackCautionSprite;
+                _restartImage.sprite = _restartCautionSprite;
+                _warFundsImage.sprite = _warFundsCautionSprite;
+                _statusText.text = "Caution";
+            }
+            else
+            {
+                _armoryImage.sprite = _armoryWarningSprite;
+                _levelStatusImage.sprite = _levelStatusWarningSprite;
+                _livesWaveImage.sprite = _livesWaveWarningSprite;
+                _playbackImage.sprite = _playbackWarningSprite;
+                _restartImage.sprite = _restartWarningSprite;
+                _warFundsImage.sprite = _warFundsWarningSprite;
+                _statusText.text = "Warning!";
+            }
+        }
+
+        public void UpdateWaveCount(int currentWave, int numberOfWaves)
+        {
+            _waveCount.text = currentWave + " / " + numberOfWaves;
+        }
+
+        public void LevelEnd(bool alive)
+        {
+            if (alive == true)
+            {
+                _levelStatus.SetActive(true);
+                _levelStatusText.text = "LEVEL\nCOMPLETE";
+            }
+            else
+            {
+                _levelStatus.SetActive(true);
+                _levelStatusText.text = "LEVEL\nFAILED";
+            }
+        }
+
+        public void RestartButtonClick()
+        {
+            _restartButton.sprite = _restartPressedSprite;
+            GameManager.Instance.RestartLevel();
         }
     }
 }

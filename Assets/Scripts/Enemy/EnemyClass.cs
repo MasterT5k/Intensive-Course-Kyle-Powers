@@ -19,6 +19,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         [SerializeField]
         protected int _startingHealth = 1;
         [SerializeField]
+        protected int _livesCost = 1;
+        [SerializeField]
         protected int _currencyValue = 0;
         [SerializeField]
         protected int _damage = 1;
@@ -34,6 +36,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected Transform _rotationObj = null;
 
         public static event Action<int> onDestroyed;
+        public static event Action<int> onReachedEnd;
         public static event Action<GameObject> onHealthGone;
         public static event Action onDisabled;
         public static event Func<Transform> onGetEndPoint;
@@ -161,6 +164,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void ReachedPathEnd()
         {
+            onReachedEnd?.Invoke(_livesCost);
             gameObject.SetActive(false);
         }
 
