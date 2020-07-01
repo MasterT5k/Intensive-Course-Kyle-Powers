@@ -97,7 +97,7 @@ namespace GameDevHQ.Other.CameraController
             if (hInput != 0f || vInput != 0f)
             {
                 Vector3 direction = new Vector3(vInput, 0f, -hInput);
-                Vector3 velocity = direction * _speed * Time.deltaTime;
+                Vector3 velocity = direction * _speed * Time.unscaledDeltaTime;
                 Vector3 newPos = transform.position + velocity;
                 newPos.y = _yPos;
                 newPos.x = Mathf.Clamp(newPos.x, _xLimitMin, _xLimitMax);

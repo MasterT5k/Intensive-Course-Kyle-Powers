@@ -81,7 +81,7 @@ namespace GameDevHQ.Tower.PlaceableAreaNS
                 int towerID = (int)(onGetSelectedTowerID?.Invoke());
                 PlaceTower(towerID);
             }
-            else if (_inPlaceMode == false)
+            else if (_inPlaceMode == false && _canTakeTower == false)
             {
                 Debug.Log("Upgrade Tower.");
                 UIManager.Instance.PlacedTowerSelected(_placedTower);

@@ -29415,7 +29415,7 @@ MonoBehaviour:
   _fireSound: {fileID: 8300000, guid: ebcd7ceac90454c1e9dc458cb87b6f75, type: 3}
   _warFundValue: 500
   _towerID: 2
-  _startingHealth: 10
+  _startingHealth: 100
   _damage: 2
   _attackDelay: 1
   _rotationPoint: {fileID: 4159911809947316}

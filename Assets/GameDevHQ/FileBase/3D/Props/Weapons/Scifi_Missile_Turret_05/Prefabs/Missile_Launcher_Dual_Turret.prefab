@@ -1091,7 +1091,7 @@ MonoBehaviour:
   _target: {fileID: 0}
   _warFundValue: 750
   _towerID: 3
-  _startingHealth: 10
+  _startingHealth: 100
   _damage: 2
   _rotationPoint: {fileID: 4451495431628806}
 --- !u!54 &5591437107892231618

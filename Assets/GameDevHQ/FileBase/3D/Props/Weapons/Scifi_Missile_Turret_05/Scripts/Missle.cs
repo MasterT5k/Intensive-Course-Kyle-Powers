@@ -7,7 +7,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle
 {
     [RequireComponent(typeof(Rigidbody))] //require rigidbody
     [RequireComponent(typeof(AudioSource))] //require audiosource
-    public class Missile : MonoBehaviour
+    public class Missle : MonoBehaviour
     {
         [SerializeField]
         private ParticleSystem _particle = null; //reference to the particle system
@@ -129,7 +129,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle
 
             if (_explosionPrefab != null)
                 Instantiate(_explosionPrefab, transform.position, Quaternion.identity); //instantiate explosion
-            Debug.Log("Hit: " + other.collider.name);
+
             Destroy(this.gameObject); //destroy the rocket (this)
         }
     }

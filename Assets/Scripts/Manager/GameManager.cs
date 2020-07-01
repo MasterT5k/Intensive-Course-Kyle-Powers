@@ -19,6 +19,8 @@ namespace GameDevHQ.Manager.GameManagerNS
         private int _startingWarFunds = 0;
         [SerializeField]
         private float _refundPercent = 0.75f;
+        [SerializeField]
+        private float _waveStartDelay = 10f;
         private int _currentLives;
         private int _currentWarFunds;
 
@@ -42,7 +44,7 @@ namespace GameDevHQ.Manager.GameManagerNS
             UIManager.Instance.SetLivesCount(_currentLives);
             UIManager.Instance.SetWarFundText(_currentWarFunds);
             ChangeTowerButtonCosts();
-            StartCoroutine(WaveComplete());
+            WaveComplete();
         }
 
         public void ChangeFunds(int amount, bool addFunds)
@@ -129,13 +131,18 @@ namespace GameDevHQ.Manager.GameManagerNS
 
         public void RestartLevel()
         {
-            SceneManager.LoadScene(0);
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(currentSceneIndex);
         }
 
-        public IEnumerator WaveComplete(bool wavesDone = false)
+        public void WaveComplete(bool wavesDone = false)
         {
-            yield return new WaitForSeconds(5f);
-            SpawnManager.Instance.StartSpawn();
+            if (wavesDone == true)
+            {
+                LevelFinished();
+                return;
+            }
+            UIManager.Instance.StartCountdown(_waveStartDelay);
         }
     }
 }

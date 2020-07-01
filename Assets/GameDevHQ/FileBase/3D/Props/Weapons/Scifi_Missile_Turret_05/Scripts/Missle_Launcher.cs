@@ -130,8 +130,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
                 rocketLeft.transform.parent = null; //set the rocket parent to null
                 rocketRight.transform.parent = null; //set the rocket parent to null
 
-                rocketLeft.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, DamageAmount);
-                rocketRight.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missile>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, DamageAmount);
+                rocketLeft.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missle>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, DamageAmount);
+                rocketRight.GetComponent<GameDevHQ.FileBase.Missle_Launcher_Dual_Turret.Missle.Missle>().AssignMissleRules(_missileType, _target, _launchSpeed, _power, _fuseDelay, _destroyTime, DamageAmount);
 
                 _misslePositionsLeft[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
                 _misslePositionsRight[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired

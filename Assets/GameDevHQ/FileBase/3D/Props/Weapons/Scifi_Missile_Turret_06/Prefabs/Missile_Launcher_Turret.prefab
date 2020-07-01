@@ -873,7 +873,7 @@ MonoBehaviour:
   _launchSpeed: 0
   _power: 5
   _fuseDelay: 0
-  _reloadTime: 0.5
+  _reloadTime: 0
   _destroyTime: 10
   _target: {fileID: 0}
   _warFundValue: 500

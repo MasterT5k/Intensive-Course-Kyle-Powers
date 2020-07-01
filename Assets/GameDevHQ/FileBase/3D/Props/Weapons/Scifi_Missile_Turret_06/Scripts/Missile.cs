@@ -134,7 +134,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher.Missile
 
             if (_explosionPrefab != null)
                 Instantiate(_explosionPrefab, transform.position, Quaternion.identity); //instantiate explosion
-            Debug.Log("Hit: " + other.collider.name);
+
             Destroy(this.gameObject); //destroy the rocket (this)
         }
     }

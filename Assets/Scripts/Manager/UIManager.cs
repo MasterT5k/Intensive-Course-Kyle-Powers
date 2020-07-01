@@ -1,6 +1,7 @@
 ﻿using GameDevHQ.Interface.ITowerNS;
 using GameDevHQ.Manager.GameManagerNS;
 using GameDevHQ.Manager.PoolManagerNS;
+using GameDevHQ.Manager.SpawnManagerNS;
 using GameDevHQ.Other.MonoSingletonNS;
 using System;
 using System.Collections;
@@ -29,6 +30,12 @@ namespace GameDevHQ.Manager.UIManagerNS
         private GameObject _levelStatus = null;
         [SerializeField]
         private Text _levelStatusText = null;
+        [SerializeField]
+        private GameObject _countdown = null;
+        [SerializeField]
+        private Text _countdownText = null;
+        [SerializeField]
+        private Text _timerText = null;
 
         [Header("Tower Fields")]
         [SerializeField]
@@ -79,6 +86,7 @@ namespace GameDevHQ.Manager.UIManagerNS
         private Sprite _armoryCautionSprite = null;
         [SerializeField]
         private Sprite _armoryWarningSprite = null;
+        private Image _countdownImage;
         private Image _levelStatusImage;
         private Sprite _levelStatusNormalSprite;
         [SerializeField]
@@ -127,6 +135,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             _missileUpgrade.SetActive(false);
             _dismantleWeapon.SetActive(false);
             _levelStatus.SetActive(false);
+            _countdown.SetActive(false);
 
             if (_galtingButton != null)
                 _gatlingCost = _galtingButton.GetComponentInChildren<Text>();
@@ -145,6 +154,9 @@ namespace GameDevHQ.Manager.UIManagerNS
 
             if (_armoryImage != null)
                 _armoryNormalSprite = _armoryImage.sprite;
+
+            if (_countdown != null)
+                _countdownImage = _countdown.GetComponent<Image>();
 
             if (_livesWaveImage != null)
                 _livesWaveNormalSprite = _livesWaveImage.sprite;
@@ -357,6 +369,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             if (lives > 60)
             {
                 _armoryImage.sprite = _armoryNormalSprite;
+                _countdownImage.sprite = _levelStatusNormalSprite;
                 _levelStatusImage.sprite = _levelStatusNormalSprite;
                 _livesWaveImage.sprite = _livesWaveNormalSprite;
                 _playbackImage.sprite = _playbackNormalSprite;
@@ -367,6 +380,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             else if (lives > 20)
             {
                 _armoryImage.sprite = _armoryCautionSprite;
+                _countdownImage.sprite = _levelStatusCautionSprite;
                 _levelStatusImage.sprite = _levelStatusCautionSprite;
                 _livesWaveImage.sprite = _livesWaveCautionSprite;
                 _playbackImage.sprite = _playbackCautionSprite;
@@ -377,6 +391,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             else
             {
                 _armoryImage.sprite = _armoryWarningSprite;
+                _countdownImage.sprite = _levelStatusWarningSprite;
                 _levelStatusImage.sprite = _levelStatusWarningSprite;
                 _livesWaveImage.sprite = _livesWaveWarningSprite;
                 _playbackImage.sprite = _playbackWarningSprite;
@@ -409,6 +424,27 @@ namespace GameDevHQ.Manager.UIManagerNS
         {
             _restartButton.sprite = _restartPressedSprite;
             GameManager.Instance.RestartLevel();
+        }
+
+        public void StartCountdown(float time)
+        {
+            StartCoroutine(CountdownCoroutine(time));
+        }
+
+        private IEnumerator CountdownCoroutine(float time)
+        {
+            _countdown.SetActive(true);
+
+            while(time > 0)
+            {
+                time -= 1 * Time.deltaTime;
+                _timerText.text = time.ToString("0") + "s";
+                yield return new WaitForEndOfFrame();
+            }
+
+            SpawnManager.Instance.StartSpawn();
+            yield return new WaitForSeconds(2f);
+            _countdown.SetActive(false);
         }
     }
 }
