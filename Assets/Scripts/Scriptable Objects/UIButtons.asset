@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed042149dd20c9e4f95c07e2de071c55, type: 3}
+  m_Name: UIButtons
+  m_EditorClassIdentifier: 
+  play: {fileID: 11400000, guid: a3f16a598b42cf049839076f3f57185a, type: 2}
+  pause: {fileID: 11400000, guid: ac562c0c0a1f39e4b97647b2a09a47be, type: 2}
+  fastForward: {fileID: 11400000, guid: 9a4ea48a91181db4bb47844939acf2d4, type: 2}
+  restart: {fileID: 11400000, guid: 373aa9e56ff2e794da794316a5f6d15c, type: 2}

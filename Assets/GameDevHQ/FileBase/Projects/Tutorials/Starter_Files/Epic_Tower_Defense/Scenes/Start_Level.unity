@@ -3903,9 +3903,7 @@ MonoBehaviour:
   _waveCount: {fileID: 640746102}
   _versionText: {fileID: 1367709903}
   _versionNumber: v0.1
-  _levelStatus: {fileID: 909662579}
   _levelStatusText: {fileID: 12562996}
-  _countdown: {fileID: 1242315026}
   _countdownText: {fileID: 1304014179}
   _timerText: {fileID: 1580345948}
   _gunUpgrade: {fileID: 1364565713}
@@ -3917,44 +3915,18 @@ MonoBehaviour:
   _galtingButton: {fileID: 150529102}
   _missileButton: {fileID: 1416097952}
   _pauseButton: {fileID: 1390762802}
-  _pauseActiveSprite: {fileID: 21300000, guid: 1b40ee5dbced949469be4da04687ac22, type: 3}
   _playButton: {fileID: 142299668}
-  _playActiveSprite: {fileID: 21300000, guid: 448ef73cc6fd35547aafb68fdce3a5af, type: 3}
   _fastForwardButton: {fileID: 230579420}
-  _fastForwardActiveSprite: {fileID: 21300000, guid: 6a54f7f7a13b1414d80be81a36a0669d,
-    type: 3}
   _restartButton: {fileID: 1322914651}
-  _restartPressedSprite: {fileID: 21300000, guid: 2e44de290e7214346ab9da4605eb1bba,
-    type: 3}
+  _uIButtons: {fileID: 11400000, guid: fd96c1989002b0b4ca9f5724dac58e9c, type: 2}
   _armoryImage: {fileID: 1706649507}
-  _armoryCautionSprite: {fileID: 21300000, guid: e0013fc1308e040439553ef0f339bf53,
-    type: 3}
-  _armoryWarningSprite: {fileID: 21300000, guid: ca25a72581df75c4b94c05987eb1a18a,
-    type: 3}
-  _levelStatusCautionSprite: {fileID: 21300000, guid: a777236ab75ae88499f6cdbaf9ff0c59,
-    type: 3}
-  _levelStatusWarningSprite: {fileID: 21300000, guid: f0f4cdc59cef57643a01e1c2d9d32605,
-    type: 3}
+  _countdownImage: {fileID: 1242315028}
+  _levelStatusImage: {fileID: 909662581}
   _livesWaveImage: {fileID: 2105959597}
-  _livesWaveCautionSprite: {fileID: 21300000, guid: 2db333e79395f6941b153d795482469c,
-    type: 3}
-  _livesWaveWarningSprite: {fileID: 21300000, guid: 28c72abd16b53994c855dcf49bf4f526,
-    type: 3}
   _playbackImage: {fileID: 1353408165}
-  _playbackCautionSprite: {fileID: 21300000, guid: 65e0e0a1bf8a8f349ad889b5547df4d8,
-    type: 3}
-  _playbackWarningSprite: {fileID: 21300000, guid: 8d77842aa4717234d894b73a2fd8afb3,
-    type: 3}
   _restartImage: {fileID: 1432688604}
-  _restartCautionSprite: {fileID: 21300000, guid: 541641fde06eda54385229fce284f8bc,
-    type: 3}
-  _restartWarningSprite: {fileID: 21300000, guid: 72d667ad5b451e44b9cc4f63612a991d,
-    type: 3}
   _warFundsImage: {fileID: 350660924}
-  _warFundsCautionSprite: {fileID: 21300000, guid: 16314272929724b449066a1379cd904f,
-    type: 3}
-  _warFundsWarningSprite: {fileID: 21300000, guid: 9a9a1ff4aee8302408bc75765e613ccc,
-    type: 3}
+  _uIBackground: {fileID: 11400000, guid: ad7707a6a51499e4aab41f7a99e6916a, type: 2}
 --- !u!1001 &595690249
 PrefabInstance:
   m_ObjectHideFlags: 0
