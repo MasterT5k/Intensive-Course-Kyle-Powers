@@ -61,8 +61,8 @@ namespace GameDevHQ.Other.CameraController
 
         void CameraMovement()
         {
-            float hInput = Input.GetAxis("Horizontal");
-            float vInput = Input.GetAxis("Vertical");
+            float hInput = Input.GetAxisRaw("Horizontal");
+            float vInput = Input.GetAxisRaw("Vertical");
             float mouseX = Input.mousePosition.x;
             float mouseY = Input.mousePosition.y;
             float scrollInput = Input.mouseScrollDelta.y;
