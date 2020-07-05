@@ -8,7 +8,13 @@ namespace GameDevHQ.Interface.IHealthNS
     {
         int StartingHealth { get; set; }
         int Health { get; set; }
+        bool Damaged { get; set; }
+        GameObject HealthBar { get; }
+        GameObject MainCamera { get; }
+        MeshRenderer HealthRender { get; }
+        MaterialPropertyBlock MatBlock { get; set; }
 
+        void AlignToCamera();
         void Damage(int amount);
         void Destroyed();
     }

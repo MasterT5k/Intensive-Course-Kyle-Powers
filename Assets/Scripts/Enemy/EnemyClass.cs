@@ -27,6 +27,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         [SerializeField]
         private float _attackDelay = 1f;
         [SerializeField]
+        private GameObject _healthBar = null;
+        [SerializeField]
         protected GameObject _explosionPrefab = null;
         [SerializeField]
         protected float _deathInactiveDelay = 5f;
@@ -55,6 +57,11 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public int StartingHealth { get; set; }
         public int Health { get; set; }
+        public bool Damaged { get; set; } = false;
+        public GameObject HealthBar => _healthBar;
+        public GameObject MainCamera => Camera.main.gameObject;
+        public MeshRenderer HealthRender => _healthBar.GetComponent<MeshRenderer>();
+        public MaterialPropertyBlock MatBlock { get; set; }
 
         public virtual void Init()
         {
@@ -62,7 +69,9 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             _anim = GetComponent<Animator>();
             _collider = GetComponent<Collider>();
             StartingHealth = _startingHealth;
+            MatBlock = new MaterialPropertyBlock();
             _startRotation = _rotationObj.localRotation;
+            HealthRender.enabled = false;
 
             if (_agent == null)
             {
@@ -99,6 +108,11 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void Update()
         {
+            if (Damaged == true)
+            {
+                AlignToCamera();
+            }
+
             if (_towerInRange == true)
             {
                 _rotationObj.LookAt(_targetedTower.transform, Vector3.up);
@@ -143,6 +157,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
                 _agent.SetDestination(_endPoint.position);
             }
             _isAlive = true;
+            Damaged = false;
             _rotationObj.localRotation = _startRotation;
             _towersInRange.Clear();
             NoTowersInRange();
@@ -154,6 +169,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             onHealthGone?.Invoke(this.gameObject);
             _agent.enabled = false;
             _explosionPrefab.SetActive(true);
+            HealthRender.enabled = false;
             _anim.SetTrigger("Destroyed");
             _anim.SetBool("Target", false);
             _isAlive = false;
@@ -170,7 +186,17 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         public virtual void Damage(int amount)
         {
+            if (Damaged == false)
+            {
+                HealthRender.enabled = true;
+                Damaged = true;
+            }
+
             Health -= amount;
+            float healthPrecent = Health / (float)StartingHealth;
+            HealthRender.GetPropertyBlock(MatBlock);
+            MatBlock.SetFloat("_amount", healthPrecent);
+            HealthRender.SetPropertyBlock(MatBlock);
 
             if (Health < 1)
             {
@@ -243,6 +269,18 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             {
                 GameObject tower = other.transform.parent.gameObject;
                 RemoveTower(tower);
+            }
+        }
+
+        public void AlignToCamera()
+        {
+            if (MainCamera != null)
+            {
+                var camXform = MainCamera.transform;
+                var forward = HealthBar.transform.position - camXform.position;
+                forward.Normalize();
+                var up = Vector3.Cross(forward, camXform.right);
+                HealthBar.transform.rotation = Quaternion.LookRotation(forward, up);
             }
         }
     }

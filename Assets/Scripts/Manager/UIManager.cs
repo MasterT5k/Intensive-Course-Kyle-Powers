@@ -97,7 +97,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             _missileUpgrade.SetActive(false);
             _dismantleWeapon.SetActive(false);
             _levelStatusImage.gameObject.SetActive(false);
-            _countdownImage.gameObject.SetActive(false);
+            _countdownImage.gameObject.SetActive(false);            
 
             if (_galtingButton != null)
                 _gatlingCost = _galtingButton.GetComponentInChildren<Text>();
@@ -167,7 +167,7 @@ namespace GameDevHQ.Manager.UIManagerNS
             {
                 case 0:
                     UpdateFunds(_gatlingFunds, 2);
-                    UpdateFunds(_dismantleFunds, towerID);
+                    UpdateFunds(_dismantleFunds, towerID, _selectedTower);
                     if (GameManager.Instance.CheckFunds(_upgradeCost) == true)
                     {
                         _towerSelected = true;
@@ -177,7 +177,7 @@ namespace GameDevHQ.Manager.UIManagerNS
                     break;
                 case 1:                    
                     UpdateFunds(_missileFunds, 3);
-                    UpdateFunds(_dismantleFunds, towerID); 
+                    UpdateFunds(_dismantleFunds, towerID, _selectedTower); 
                     if (GameManager.Instance.CheckFunds(_upgradeCost) == true)
                     {
                         _towerSelected = true;
@@ -188,7 +188,7 @@ namespace GameDevHQ.Manager.UIManagerNS
                 default:
                     Debug.Log("Tower can't be Upgraded.");
                     _dismantleWeapon.SetActive(true);
-                    UpdateFunds(_dismantleFunds, towerID);
+                    UpdateFunds(_dismantleFunds, towerID, _selectedTower);
                     break;
             }
         }
@@ -226,10 +226,19 @@ namespace GameDevHQ.Manager.UIManagerNS
             }
         }
 
-        public void UpdateFunds(Text funds, int towerID)
+        public void UpdateFunds(Text funds, int towerID, GameObject tower = null)
         {
-            int amount = PoolManager.Instance.GetTowerCost(towerID);
-            funds.text = amount.ToString();
+            int amount;
+            if (funds == _dismantleFunds && tower != null)
+            {
+                amount = GameManager.Instance.TowerRefund(tower);
+                funds.text = amount.ToString();
+            }
+            else
+            {
+                amount = PoolManager.Instance.GetTowerCost(towerID);
+                funds.text = amount.ToString();
+            }
             if (towerID > 1)
             {
                 _upgradeCost = amount;
@@ -357,8 +366,17 @@ namespace GameDevHQ.Manager.UIManagerNS
             GameManager.Instance.RestartLevel();
         }
 
-        public void StartCountdown(float time)
+        public void StartCountdown(float time, bool firstWave = false)
         {
+            if (firstWave == true)
+            {
+                _countdownText.text = "STARTING IN";
+            }
+            else
+            {
+                _countdownText.text = "NEXT WAVE";
+            }
+
             StartCoroutine(CountdownCoroutine(time));
         }
 
@@ -369,12 +387,14 @@ namespace GameDevHQ.Manager.UIManagerNS
             while(time > 0)
             {
                 time -= 1 * Time.deltaTime;
-                _timerText.text = time.ToString("0") + "s";
+                _timerText.text = time.ToString("0.0") + "s      ";
                 yield return new WaitForEndOfFrame();
             }
 
             SpawnManager.Instance.StartSpawn();
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(0.25f);
+            _timerText.text = "STARTED";
+            yield return new WaitForSeconds(1.25f);
             _countdownImage.gameObject.SetActive(false);
         }
     }

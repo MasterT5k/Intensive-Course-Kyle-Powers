@@ -4475,7 +4475,7 @@ MonoBehaviour:
   _startPoint: {fileID: 1971181768}
   _endPoint: {fileID: 232098055}
   _spawnDelay: 2
-  _baseSpawnCount: 10
+  _baseSpawnCount: 1
   _numberOfWaves: 2
 --- !u!4 &733960750
 Transform:
@@ -9932,7 +9932,7 @@ MonoBehaviour:
   _startingLives: 100
   _startingWarFunds: 1000
   _refundPercent: 0.75
-  _waveStartDelay: 10
+  _waveStartDelay: 5
 --- !u!4 &1495135275
 Transform:
   m_ObjectHideFlags: 0
@@ -10801,9 +10801,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 18}
-  m_SizeDelta: {x: 180, y: 40}
-  m_Pivot: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 104.4, y: 18}
+  m_SizeDelta: {x: 125, y: 45}
+  m_Pivot: {x: 1, y: 0}
 --- !u!114 &1580345948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10829,13 +10829,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 44
-    m_Alignment: 4
+    m_Alignment: 5
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 10s
+  m_Text: '5.0s      '
 --- !u!222 &1580345949
 CanvasRenderer:
   m_ObjectHideFlags: 0

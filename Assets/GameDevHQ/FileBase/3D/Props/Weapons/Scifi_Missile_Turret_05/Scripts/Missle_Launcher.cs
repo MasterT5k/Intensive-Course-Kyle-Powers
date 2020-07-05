@@ -51,6 +51,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         [SerializeField]
         private int _damage = 0;
         [SerializeField]
+        private GameObject _healthBar = null;
+        [SerializeField]
         private Transform _rotationPoint = null;
 
         private bool _launched; //bool to check if we launched the rockets
@@ -67,6 +69,11 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         public MeshRenderer AttackRange { get; set; }
         public Transform RotationObj { get; set; }
         public List<GameObject> EnemiesInRange { get; set; }
+        public bool Damaged { get; set; } = false;
+        public GameObject HealthBar => _healthBar;
+        public GameObject MainCamera => Camera.main.gameObject;
+        public MeshRenderer HealthRender => _healthBar.GetComponent<MeshRenderer>();
+        public MaterialPropertyBlock MatBlock { get; set; }
 
         public static event Action<GameObject> onDestroyed;
 
@@ -74,6 +81,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         {
             EnemyClass.onHealthGone += RemoveEnemy;
             TowerPlacement.onSelectTower += PlaceMode;
+            Damaged = false;
+            HealthRender.enabled = false;
             Health = StartingHealth;
             AttackRange.enabled = false;
             EnemiesInRange.Clear();
@@ -103,6 +112,11 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
                     _launched = true;
                     StartCoroutine(FireRocketsRoutine());
                 }
+            }
+
+            if (Damaged == true)
+            {
+                AlignToCamera();
             }
         }
 
@@ -178,6 +192,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             DamageAmount = _damage;
             EnemiesInRange = new List<GameObject>();
             StartingHealth = _startingHealth;
+            HealthRender.enabled = false;
+            MatBlock = new MaterialPropertyBlock();
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -226,7 +242,17 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 
         public void Damage(int amount)
         {
+            if (Damaged == false)
+            {
+                HealthRender.enabled = true;
+                Damaged = true;
+            }
+
             Health -= amount;
+            float healthPrecent = Health / (float)StartingHealth;
+            HealthRender.GetPropertyBlock(MatBlock);
+            MatBlock.SetFloat("_amount", healthPrecent);
+            HealthRender.SetPropertyBlock(MatBlock);
 
             if (Health < 1)
             {
@@ -238,6 +264,18 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         {
             Debug.Log("Tower " + this.name + " destroyed.");
             gameObject.SetActive(false);
+        }
+
+        public void AlignToCamera()
+        {
+            if (MainCamera != null)
+            {
+                var camXform = MainCamera.transform;
+                var forward = HealthBar.transform.position - camXform.position;
+                forward.Normalize();
+                var up = Vector3.Cross(forward, camXform.right);
+                HealthBar.transform.rotation = Quaternion.LookRotation(forward, up);
+            }
         }
     }
 }

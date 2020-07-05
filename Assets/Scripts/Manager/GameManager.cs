@@ -20,7 +20,8 @@ namespace GameDevHQ.Manager.GameManagerNS
         [SerializeField]
         private float _refundPercent = 0.75f;
         [SerializeField]
-        private float _waveStartDelay = 10f;
+        private float _waveStartDelay = 5f;
+        private bool _firstWave = true;
         private int _currentLives;
         private int _currentWarFunds;
 
@@ -68,6 +69,13 @@ namespace GameDevHQ.Manager.GameManagerNS
         private void EnemyReachedEnd(int livesCost)
         {
             ChangeLives(livesCost, false);
+        }
+
+        public int TowerRefund(GameObject tower)
+        {
+            int towerCost = tower.GetComponent<ITower>().WarFundValue;
+            int refund = Mathf.RoundToInt(towerCost * _refundPercent);
+            return refund;
         }
 
         public void TowerDismantled(GameObject tower)
@@ -142,7 +150,16 @@ namespace GameDevHQ.Manager.GameManagerNS
                 LevelFinished();
                 return;
             }
-            UIManager.Instance.StartCountdown(_waveStartDelay);
+
+            if (_firstWave == true)
+            {
+                UIManager.Instance.StartCountdown(_waveStartDelay * 2, true);
+                _firstWave = false;
+            }
+            else
+            {
+                UIManager.Instance.StartCountdown(_waveStartDelay);
+            }
         }
     }
 }
