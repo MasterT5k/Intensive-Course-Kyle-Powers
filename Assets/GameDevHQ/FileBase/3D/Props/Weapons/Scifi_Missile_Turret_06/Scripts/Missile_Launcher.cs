@@ -59,6 +59,8 @@ namespace GameDevHQ.FileBase.Missile_Launcher
         private Transform _rotationPoint = null;
 
         private bool _launched;
+        private WaitForSeconds _reloadYield;
+        private WaitForSeconds _attackYield;
 
         public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }
@@ -142,12 +144,12 @@ namespace GameDevHQ.FileBase.Missile_Launcher
 
                 _misslePositions[i].SetActive(false);
 
-                yield return new WaitForSeconds(AttackDelay);
+                yield return _attackYield;
             }
 
             for (int i = 0; i < _misslePositions.Length; i++)
             {
-                yield return new WaitForSeconds(_reloadTime);
+                yield return _reloadYield;
                 _misslePositions[i].SetActive(true);
             }
 
@@ -185,6 +187,8 @@ namespace GameDevHQ.FileBase.Missile_Launcher
             StartingHealth = _startingHealth;
             HealthRender.enabled = false;
             MatBlock = new MaterialPropertyBlock();
+            _reloadYield = new WaitForSeconds(_reloadTime);
+            _attackYield = new WaitForSeconds(AttackDelay);
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -253,7 +257,7 @@ namespace GameDevHQ.FileBase.Missile_Launcher
 
         public void Destroyed()
         {
-            Debug.Log("Tower " + this.name + " destroyed.");
+            //Debug.Log("Tower " + this.name + " destroyed.");
             gameObject.SetActive(false);
         }
 

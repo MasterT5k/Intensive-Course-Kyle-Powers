@@ -86,6 +86,9 @@ namespace GameDevHQ.Manager.UIManagerNS
         private bool _towerSelected;
         private GameObject _selectedTower;
         private int _upgradeCost;
+        private WaitForEndOfFrame _endOfFrameYield;
+        private WaitForSeconds _startYield;
+        private WaitForSeconds _inactiveYield;
 
         public static event Action<int> onTowerButtonClick;
         public static event Action<int, GameObject> onUpgradeButtonClick;
@@ -97,7 +100,10 @@ namespace GameDevHQ.Manager.UIManagerNS
             _missileUpgrade.SetActive(false);
             _dismantleWeapon.SetActive(false);
             _levelStatusImage.gameObject.SetActive(false);
-            _countdownImage.gameObject.SetActive(false);            
+            _countdownImage.gameObject.SetActive(false);
+            _endOfFrameYield = new WaitForEndOfFrame();
+            _startYield = new WaitForSeconds(0.25f);
+            _inactiveYield = new WaitForSeconds(1.25f);
 
             if (_galtingButton != null)
                 _gatlingCost = _galtingButton.GetComponentInChildren<Text>();
@@ -151,7 +157,7 @@ namespace GameDevHQ.Manager.UIManagerNS
         {
             if (_towerSelected == true)
             {
-                Debug.Log("Tower already selected.");
+                //Debug.Log("Tower already selected.");
                 return;
             }
 
@@ -186,7 +192,7 @@ namespace GameDevHQ.Manager.UIManagerNS
                     _dismantleWeapon.SetActive(true);
                     break;
                 default:
-                    Debug.Log("Tower can't be Upgraded.");
+                    //Debug.Log("Tower can't be Upgraded.");
                     _dismantleWeapon.SetActive(true);
                     UpdateFunds(_dismantleFunds, towerID, _selectedTower);
                     break;
@@ -201,11 +207,11 @@ namespace GameDevHQ.Manager.UIManagerNS
                     ClearSelection();
                     break;
                 case 2:
-                    Debug.Log("Place Dual Gatling Gun.");
+                    //Debug.Log("Place Dual Gatling Gun.");
                     onUpgradeButtonClick?.Invoke(2, _selectedTower);
                     break;
                 case 3:
-                    Debug.Log("Place Dual Missile Launcher.");
+                    //Debug.Log("Place Dual Missile Launcher.");
                     onUpgradeButtonClick?.Invoke(3, _selectedTower);
                     break;
                 default:
@@ -268,7 +274,7 @@ namespace GameDevHQ.Manager.UIManagerNS
                     }
                     else
                     {
-                        Debug.Log("Already in Pause Mode.");
+                        //Debug.Log("Already in Pause Mode.");
                     }
                     break;
                 case 1:
@@ -281,7 +287,7 @@ namespace GameDevHQ.Manager.UIManagerNS
                     }
                     else
                     {
-                        Debug.Log("Already in Play Mode.");
+                        //Debug.Log("Already in Play Mode.");
                     }
                     break;
                 case 2:
@@ -294,7 +300,7 @@ namespace GameDevHQ.Manager.UIManagerNS
                     }
                     else
                     {
-                        Debug.Log("Already in FastForward Mode.");
+                        //Debug.Log("Already in FastForward Mode.");
                     }
                     break;
                 default:
@@ -388,13 +394,13 @@ namespace GameDevHQ.Manager.UIManagerNS
             {
                 time -= 1 * Time.deltaTime;
                 _timerText.text = time.ToString("0.0") + "s      ";
-                yield return new WaitForEndOfFrame();
+                yield return _endOfFrameYield;
             }
 
             SpawnManager.Instance.StartSpawn();
-            yield return new WaitForSeconds(0.25f);
+            yield return _startYield;
             _timerText.text = "STARTED";
-            yield return new WaitForSeconds(1.25f);
+            yield return _inactiveYield;
             _countdownImage.gameObject.SetActive(false);
         }
     }

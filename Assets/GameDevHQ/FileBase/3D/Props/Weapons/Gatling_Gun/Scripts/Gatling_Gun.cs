@@ -240,7 +240,7 @@ namespace GameDevHQ.FileBase.Gatling_Gun
 
         public void Destroyed()
         {
-            Debug.Log("Tower " + this.name + " destroyed.");
+            //Debug.Log("Tower " + this.name + " destroyed.");
             gameObject.SetActive(false);
         }
 

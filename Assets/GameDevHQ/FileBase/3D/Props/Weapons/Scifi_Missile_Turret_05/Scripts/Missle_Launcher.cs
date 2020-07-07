@@ -56,6 +56,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
         private Transform _rotationPoint = null;
 
         private bool _launched; //bool to check if we launched the rockets
+        private WaitForSeconds _reloadYield;
+        private WaitForSeconds _attackYield;
 
         public bool IsEnemyInRange { get; set; }
         public int WarFundValue { get; set; }
@@ -150,12 +152,12 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
                 _misslePositionsLeft[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
                 _misslePositionsRight[i].SetActive(false); //turn off the rocket sitting in the turret to make it look like it fired
 
-                yield return new WaitForSeconds(AttackDelay); //wait for the firedelay
+                yield return _attackYield; //wait for the firedelay
             }
 
             for (int i = 0; i < _misslePositionsLeft.Length; i++) //itterate through missle positions
             {
-                yield return new WaitForSeconds(_reloadTime); //wait for reload time
+                yield return _reloadYield; //wait for reload time
                 _misslePositionsLeft[i].SetActive(true); //enable fake rocket to show ready to fire
                 _misslePositionsRight[i].SetActive(true); //enable fake rocket to show ready to fire
             }
@@ -194,6 +196,8 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
             StartingHealth = _startingHealth;
             HealthRender.enabled = false;
             MatBlock = new MaterialPropertyBlock();
+            _reloadYield = new WaitForSeconds(_reloadTime);
+            _attackYield = new WaitForSeconds(AttackDelay);
         }
 
         public void PlaceMode(bool inPlaceMode)
@@ -262,7 +266,7 @@ namespace GameDevHQ.FileBase.Missle_Launcher_Dual_Turret
 
         public void Destroyed()
         {
-            Debug.Log("Tower " + this.name + " destroyed.");
+            //Debug.Log("Tower " + this.name + " destroyed.");
             gameObject.SetActive(false);
         }
 

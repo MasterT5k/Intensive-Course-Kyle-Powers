@@ -27,7 +27,7 @@ namespace GameDevHQ.Other.MonoSingletonNS
 
         public virtual void Init()
         {
-            Debug.Log(typeof(T).ToString() + " has been Initialized");
+            //Debug.Log(typeof(T).ToString() + " has been Initialized");
         }
     }
 }

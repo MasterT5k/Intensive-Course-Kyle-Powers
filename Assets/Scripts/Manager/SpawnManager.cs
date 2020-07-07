@@ -27,6 +27,7 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         private bool _wavesDone = false;
         private bool _firstWave = true;
         private bool _spawning = false;
+        private WaitForSeconds _spawnYield;
 
         public static event Func<GameObject> onGetEnemy;
 
@@ -42,10 +43,10 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             EnemyClass.onGetEndPoint -= GetEndPoint;
         }
 
-        //private void Start()
-        //{
-        //    StartCoroutine(SpawnCoroutine());
-        //}
+        private void Start()
+        {
+            _spawnYield = new WaitForSeconds(_spawnDelay);
+        }
 
         public void StartSpawn()
         {
@@ -71,7 +72,7 @@ namespace GameDevHQ.Manager.SpawnManagerNS
                 _spawnedEnemies++;
                 _activeEnemies++;
 
-                yield return new WaitForSeconds(_spawnDelay);
+                yield return _spawnYield;
 
                 GameObject obj = onGetEnemy?.Invoke();
 
@@ -117,7 +118,6 @@ namespace GameDevHQ.Manager.SpawnManagerNS
                     return;
                 }
                 GameManager.Instance.WaveComplete(false);
-                //StartCoroutine(SpawnCoroutine());
             }
         }
 

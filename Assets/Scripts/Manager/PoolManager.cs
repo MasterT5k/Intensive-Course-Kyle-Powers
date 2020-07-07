@@ -92,7 +92,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
                 selectedObj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
                 _enemyPool.Add(selectedObj);
-                Debug.Log("Created new Enemy Prefab.");
+                //Debug.Log("Created new Enemy Prefab.");
                 return selectedObj;
             }
             else
@@ -114,7 +114,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
                         selectedObj = Instantiate(tower, _towerContainer.transform);
                         _towerPool.Add(selectedObj);
                         selectedObj.SetActive(false);
-                        Debug.Log("Created new Tower Prefab of Type: " + towerID);
+                        //Debug.Log("Created new Tower Prefab of Type: " + towerID);
                         break;
                     }
                 }

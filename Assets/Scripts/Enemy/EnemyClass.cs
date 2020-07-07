@@ -54,6 +54,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
         protected GameObject _targetedTower;
         protected IHealth _towerHealth;
         protected Quaternion _startRotation;
+        protected WaitForSeconds _deathYield;
+        protected WaitForSeconds _fadeYield;
 
         public int StartingHealth { get; set; }
         public int Health { get; set; }
@@ -72,6 +74,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             MatBlock = new MaterialPropertyBlock();
             _startRotation = _rotationObj.localRotation;
             HealthRender.enabled = false;
+            _deathYield = new WaitForSeconds(_deathInactiveDelay);
+            _fadeYield = new WaitForSeconds(2f);
 
             if (_agent == null)
             {
@@ -145,7 +149,7 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             if (_endPoint == null)
             {
                 _endPoint = onGetEndPoint?.Invoke();
-                Debug.Log("End Point was retrieved.");
+                //Debug.Log("End Point was retrieved.");
                 Health = StartingHealth;
                 _agent.speed = _speed;
                 _agent.SetDestination(_endPoint.position);
@@ -245,10 +249,10 @@ namespace GameDevHQ.Enemy.EnemyClassNS
 
         protected IEnumerator InactiveCoroutine(float inactiveDelay)
         {
-            yield return new WaitForSeconds(inactiveDelay);
+            yield return _deathYield;
             _anim.SetTrigger("Fade");
             _explosionPrefab.SetActive(false);
-            yield return new WaitForSeconds(2f);
+            yield return _fadeYield;
             _anim.Rebind();
             gameObject.SetActive(false);
         }
