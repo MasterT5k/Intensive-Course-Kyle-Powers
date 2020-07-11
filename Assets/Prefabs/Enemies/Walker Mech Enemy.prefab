@@ -2014,6 +2014,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a1f22840f0bfe046bad8e012c8e313a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyID: 1
   _speed: 1.5
   _startingHealth: 3
   _livesCost: 5

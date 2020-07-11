@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using GameDevHQ.Enemy.EnemyClassNS;
 
 namespace GameDevHQ.Manager.PoolManagerNS
 {
@@ -40,9 +41,8 @@ namespace GameDevHQ.Manager.PoolManagerNS
         void Start()
         {
             int baseSpawnCount = SpawnManager.Instance.GetBaseSpawnCount();
-            int numberOfWaves = SpawnManager.Instance.GetNumberOfWaves();
 
-            _enemyPool = GenerateEnemies(baseSpawnCount, numberOfWaves);
+            _enemyPool = GenerateEnemies(baseSpawnCount);
             _towerPool = GenerateTowers(_baseNumberOfEachType);
 
             foreach (var tower in _towerPrefabs)
@@ -51,17 +51,16 @@ namespace GameDevHQ.Manager.PoolManagerNS
             }
         }
 
-        List<GameObject> GenerateEnemies(int baseSpawnCount, int numberOfWaves)
+        List<GameObject> GenerateEnemies(int baseSpawnCount)
         {
-            int enemiesToCreate = baseSpawnCount * numberOfWaves;
-
-            for (int i = 0; i < enemiesToCreate; i++)
+            for (int i = 0; i < baseSpawnCount; i++)
             {
-                int randomEnemy = Random.Range(0, _enemyPrefabs.Length);
-
-                GameObject obj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
-                obj.SetActive(false);
-                _enemyPool.Add(obj);
+                for (int n = 0; n < _enemyPrefabs.Length; n++)
+                {
+                    GameObject obj = Instantiate(_enemyPrefabs[n], _enemyContainer.transform);
+                    obj.SetActive(false);
+                    _enemyPool.Add(obj);
+                }
             }
             return _enemyPool;
         }
@@ -82,15 +81,13 @@ namespace GameDevHQ.Manager.PoolManagerNS
             return _towerPool;
         }
 
-        public GameObject RequestInactiveEnemy()
+        public GameObject RequestInactiveEnemy(int enemyID)
         {
-            GameObject selectedObj = _enemyPool.FirstOrDefault((enemy) => enemy.activeInHierarchy == false);
+            GameObject selectedObj = _enemyPool.FirstOrDefault((enemy) => (enemy.activeInHierarchy == false && enemy.GetComponent<EnemyClass>().GetEnemyID() == enemyID));
 
             if (selectedObj == null)
             {
-                int randomEnemy = Random.Range(0, _enemyPrefabs.Length);
-
-                selectedObj = Instantiate(_enemyPrefabs[randomEnemy], _enemyContainer.transform);
+                selectedObj = Instantiate(_enemyPrefabs[enemyID], _enemyContainer.transform);
                 _enemyPool.Add(selectedObj);
                 //Debug.Log("Created new Enemy Prefab.");
                 return selectedObj;

@@ -15,6 +15,8 @@ namespace GameDevHQ.Enemy.EnemyClassNS
     public abstract class EnemyClass : MonoBehaviour, IHealth
     {
         [SerializeField]
+        protected int _enemyID = -1;
+        [SerializeField]
         protected float _speed = 1.5f;
         [SerializeField]
         protected int _startingHealth = 1;
@@ -217,6 +219,11 @@ namespace GameDevHQ.Enemy.EnemyClassNS
             }
             _towerInRange = true;
             _anim.SetBool("Target", true);
+        }
+
+        public int GetEnemyID()
+        {
+            return _enemyID;
         }
 
         public Transform GetHitTarget()

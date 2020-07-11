@@ -21,6 +21,8 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         private int _baseSpawnCount = 10;
         [SerializeField]
         private int _numberOfWaves = 3;
+        [SerializeField]
+        private List<Wave> _waves = new List<Wave>();
         private int _currentWave = 1;
         private int _spawnedEnemies = 0;
         private int _activeEnemies = 0;
@@ -29,7 +31,7 @@ namespace GameDevHQ.Manager.SpawnManagerNS
         private bool _spawning = false;
         private WaitForSeconds _spawnYield;
 
-        public static event Func<GameObject> onGetEnemy;
+        public static event Func<int,GameObject> onGetEnemy;
 
         private void OnEnable()
         {
@@ -53,6 +55,54 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             StartCoroutine(SpawnCoroutine());
         }
 
+        //private IEnumerator SpawnCoroutine()
+        //{
+        //    if (_spawning == true)
+        //    {
+        //        yield break;
+        //    }
+
+        //    _spawning = true;
+
+        //    int amountToSpawn = _baseSpawnCount * _currentWave;
+        //    _spawnedEnemies = 0;
+
+        //    SendWaveInfo(_currentWave, _numberOfWaves);
+
+        //    while (_spawnedEnemies < amountToSpawn)
+        //    {
+        //        _spawnedEnemies++;
+        //        _activeEnemies++;
+
+        //        yield return _spawnYield;
+
+        //        GameObject obj = onGetEnemy?.Invoke();
+
+        //        if (obj == null)
+        //        {
+        //            Debug.LogError("Didn't get an Enemy back from Pool Manager.");
+        //            yield break;
+        //        }
+        //        obj.transform.position = _startPoint.position;
+        //        obj.transform.rotation = _startPoint.rotation;
+        //        obj.SetActive(true);
+        //    }
+
+        //    _currentWave++;
+
+        //    if (_firstWave == true)
+        //    {
+        //        _firstWave = false;
+        //    }
+
+        //    if (_currentWave > _numberOfWaves)
+        //    {
+        //        _wavesDone = true;
+        //    }
+
+        //    _spawning = false;
+        //}
+
         private IEnumerator SpawnCoroutine()
         {
             if (_spawning == true)
@@ -62,19 +112,22 @@ namespace GameDevHQ.Manager.SpawnManagerNS
 
             _spawning = true;
 
-            int amountToSpawn = _baseSpawnCount * _currentWave;
+            Wave wave = _waves[_currentWave - 1];
+
+            int amountToSpawn = wave.enemiesToSpawn.Count;
             _spawnedEnemies = 0;
 
-            SendWaveInfo(_currentWave, _numberOfWaves);
+            SendWaveInfo(_currentWave, _waves.Count);
 
             while (_spawnedEnemies < amountToSpawn)
             {
+                int enemyID = wave.enemiesToSpawn[_spawnedEnemies].enemyID;
                 _spawnedEnemies++;
                 _activeEnemies++;
 
                 yield return _spawnYield;
 
-                GameObject obj = onGetEnemy?.Invoke();
+                GameObject obj = onGetEnemy?.Invoke(enemyID);
 
                 if (obj == null)
                 {

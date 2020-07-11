@@ -4475,8 +4475,10 @@ MonoBehaviour:
   _startPoint: {fileID: 1971181768}
   _endPoint: {fileID: 232098055}
   _spawnDelay: 2
-  _baseSpawnCount: 1
-  _numberOfWaves: 2
+  _baseSpawnCount: 10
+  _numberOfWaves: 5
+  _waves:
+  - {fileID: 11400000, guid: 2ec5039868839fc4cab6d5fde82a0b69, type: 2}
 --- !u!4 &733960750
 Transform:
   m_ObjectHideFlags: 0
