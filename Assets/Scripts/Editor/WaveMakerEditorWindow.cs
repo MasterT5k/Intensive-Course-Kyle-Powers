@@ -7,7 +7,7 @@ public class WaveMakerEditorWindow : EditorWindow
 {
     public string waveName = "new Wave";
     public int numberOfEnemies = 1;
-    public List<Object> enemies = new List<Object>();
+    public List<EnemyType> enemies = new List<EnemyType>();
     public Vector2 scrollPos;
 
     [MenuItem("Window/Wave Creator")]
@@ -32,8 +32,8 @@ public class WaveMakerEditorWindow : EditorWindow
 
         for (int i = 0; i < numberOfEnemies; i++)
         {
-            enemies.Add(new Object());
-            enemies[i] = EditorGUILayout.ObjectField(enemies[i], typeof(EnemyType), false);
+            enemies.Add(null);
+            enemies[i] = (EnemyType)EditorGUILayout.ObjectField(enemies[i], typeof(EnemyType), false);
         }
 
         EditorGUILayout.EndScrollView();
@@ -53,7 +53,7 @@ public class WaveMakerEditorWindow : EditorWindow
         {
             if (enemy != null)
             {
-                asset.enemiesToSpawn.Add((EnemyType)enemy);
+                asset.enemiesToSpawn.Add(enemy);
             }
         }
 

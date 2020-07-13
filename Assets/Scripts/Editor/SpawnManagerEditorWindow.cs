@@ -6,6 +6,11 @@ using GameDevHQ.Manager.SpawnManagerNS;
 
 public class SpawnManagerEditorWindow : EditorWindow
 {
+    public string waveName = "new Wave";
+    public int numberOfEnemies = 1;
+    public List<EnemyType> enemies = new List<EnemyType>();
+    public Vector2 scrollPos;
+
     public SpawnManager spawnManager;
     private Transform _startPoint;
     private Transform _endPoint;
@@ -18,7 +23,9 @@ public class SpawnManagerEditorWindow : EditorWindow
     [MenuItem("Window/Spawn Manager")]
     public static void ShowWindow()
     {
-        GetWindow<SpawnManagerEditorWindow>("Spawn Manager");
+        SpawnManagerEditorWindow window = GetWindow<SpawnManagerEditorWindow>("Spawn Manager");
+        window.maxSize = new Vector2(825, 600);
+        window.minSize = window.maxSize;
     }
 
     public void OnGUI()
@@ -27,7 +34,9 @@ public class SpawnManagerEditorWindow : EditorWindow
         {
             SetSpawnManager();
         }
-        
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.BeginVertical(GUILayout.Width(400));
         spawnManager = (SpawnManager)EditorGUILayout.ObjectField("Spawn Manager", spawnManager, typeof(SpawnManager), true);
         _startPoint = (Transform)EditorGUILayout.ObjectField("Start Point", _startPoint, typeof(Transform), true);
         _endPoint = (Transform)EditorGUILayout.ObjectField("End Point", _endPoint, typeof(Transform), true);
@@ -58,6 +67,40 @@ public class SpawnManagerEditorWindow : EditorWindow
             ChangeSpawnManager();
         }
 
+        if (GUILayout.Button("Reload Spawn Manager"))
+        {
+            ReloadSpawnManager();
+        }
+        EditorGUILayout.EndVertical();
+
+        DrawUILine(Color.gray);
+
+        EditorGUILayout.BeginVertical(GUILayout.Width(400));
+        waveName = EditorGUILayout.TextField("Name of Wave", waveName);
+        numberOfEnemies = EditorGUILayout.IntSlider("Number Of Enemies", numberOfEnemies, 1, 100);
+
+        while (enemies.Count > numberOfEnemies)
+        {
+            enemies.RemoveAt(enemies.Count - 1);
+        }
+
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(400));
+
+        for (int i = 0; i < numberOfEnemies; i++)
+        {
+            enemies.Add(null);
+            enemies[i] = (EnemyType)EditorGUILayout.ObjectField(enemies[i], typeof(EnemyType), false);
+        }
+
+        EditorGUILayout.EndScrollView();
+
+        if (GUILayout.Button("Create Wave"))
+        {
+            CreateWave();
+        }
+
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.EndHorizontal();
     }
 
     public void SetSpawnManager()
@@ -66,7 +109,6 @@ public class SpawnManagerEditorWindow : EditorWindow
         if (spawnManager != null)
         {
             GetInfo();
-            Debug.Log("Found it!");
         }
     }
 
@@ -81,7 +123,6 @@ public class SpawnManagerEditorWindow : EditorWindow
         {
             _waves.Add(tempWaves[i]);
         }
-
         _numberOfWaves = _waves.Count;
     }
     
@@ -92,7 +133,42 @@ public class SpawnManagerEditorWindow : EditorWindow
 
     public void ReloadSpawnManager()
     {
-        Debug.Log("Reload");
         SetSpawnManager();
     }
+
+    public void CreateWave()
+    {
+        Wave asset = CreateInstance<Wave>();
+        foreach (var enemy in enemies)
+        {
+            if (enemy != null)
+            {
+                asset.enemiesToSpawn.Add(enemy);
+            }
+        }
+
+        AssetDatabase.CreateAsset(asset, "Assets/Scripts/Scriptable Objects/Waves/" + waveName + ".asset");
+        AssetDatabase.SaveAssets();
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = asset;
+
+        ResetWindow();
+    }
+
+    public void ResetWindow()
+    {
+        waveName = "new Wave";
+        numberOfEnemies = 0;
+    }
+
+    public void DrawUILine(Color color, int thickness = 2, int padding = 2)
+    {
+        Rect rect = EditorGUILayout.GetControlRect(GUILayout.Width(padding + thickness));
+        rect.width = thickness;
+        rect.y += padding / 2;
+        rect.x += 2;
+        rect.height += 550;
+        EditorGUI.DrawRect(rect, color);
+    }
+
 }

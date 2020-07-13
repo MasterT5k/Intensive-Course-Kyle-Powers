@@ -152,7 +152,12 @@ namespace GameDevHQ.Manager.SpawnManagerNS
             _startPoint = startPoint;
             _endPoint = endPoint;
             _spawnDelay = spawnDelay;
-            _waves = waves;
+            List<Wave> tempWaves = waves;
+            _waves.Clear();
+            for (int i = 0; i < tempWaves.Count; i++)
+            {
+                _waves.Add(tempWaves[i]);
+            }
         }
     }
 }
