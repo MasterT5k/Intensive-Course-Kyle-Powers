@@ -4475,8 +4475,6 @@ MonoBehaviour:
   _startPoint: {fileID: 1971181768}
   _endPoint: {fileID: 232098055}
   _spawnDelay: 2
-  _baseSpawnCount: 10
-  _numberOfWaves: 5
   _waves:
   - {fileID: 11400000, guid: 2ec5039868839fc4cab6d5fde82a0b69, type: 2}
 --- !u!4 &733960750
@@ -6825,17 +6823,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 210767d6b2e90ed4fb930ddcedd11913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefabs:
-  - {fileID: 4865037146151040894, guid: 85ab44a938714fe4b9d9dbf27cf7d4e7, type: 3}
-  - {fileID: 1590880610083368507, guid: 06adf5a94cceb504eae6b8612c6e5b11, type: 3}
+  _enemyList: {fileID: 11400000, guid: 88feeada2cb0a6643aaf81db97e8891b, type: 2}
   _enemyContainer: {fileID: 2115118228}
+  _baseNumberOfEachEnemy: 10
   _towerPrefabs:
   - {fileID: 1425032208015248, guid: 75f3d166786e1cb40afc4396cd0bcc22, type: 3}
   - {fileID: 1821146363788296, guid: 23a8b9b94225d3845aed312b792882a9, type: 3}
   - {fileID: 1873819670802014, guid: 4565034b2cea2354aa1991c60bc1cd44, type: 3}
   - {fileID: 1815566672332072, guid: 7576f8495ea90394ca92d5b8828f516b, type: 3}
   _towerContainer: {fileID: 560937620}
-  _baseNumberOfEachType: 1
+  _baseNumberOfEachTower: 4
 --- !u!4 &1133153153
 Transform:
   m_ObjectHideFlags: 0

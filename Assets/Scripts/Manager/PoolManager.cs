@@ -13,9 +13,11 @@ namespace GameDevHQ.Manager.PoolManagerNS
     public class PoolManager : MonoSingleton<PoolManager>
     {
         [SerializeField]
-        private GameObject[] _enemyPrefabs = null;
+        private Enemies _enemyList = null;
         [SerializeField]
         private GameObject _enemyContainer = null;
+        [SerializeField]
+        private int _baseNumberOfEachEnemy = 10;
         private List<GameObject> _enemyPool = new List<GameObject>();
 
         [SerializeField]
@@ -23,7 +25,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
         [SerializeField]
         private GameObject _towerContainer = null;
         [SerializeField]
-        private int _baseNumberOfEachType = 4;
+        private int _baseNumberOfEachTower = 4;
         private List<GameObject> _towerPool = new List<GameObject>();
 
         private void OnEnable()
@@ -40,10 +42,10 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
         void Start()
         {
-            int baseSpawnCount = SpawnManager.Instance.GetBaseSpawnCount();
+            _enemyList.SetClassList();
 
-            _enemyPool = GenerateEnemies(baseSpawnCount);
-            _towerPool = GenerateTowers(_baseNumberOfEachType);
+            _enemyPool = GenerateEnemies(_baseNumberOfEachEnemy);
+            _towerPool = GenerateTowers(_baseNumberOfEachTower);
 
             foreach (var tower in _towerPrefabs)
             {
@@ -55,9 +57,9 @@ namespace GameDevHQ.Manager.PoolManagerNS
         {
             for (int i = 0; i < baseSpawnCount; i++)
             {
-                for (int n = 0; n < _enemyPrefabs.Length; n++)
+                for (int n = 0; n < _enemyList.enemyScriptables.Length; n++)
                 {
-                    GameObject obj = Instantiate(_enemyPrefabs[n], _enemyContainer.transform);
+                    GameObject obj = Instantiate(_enemyList.GetEnemyPrefab(n), _enemyContainer.transform);
                     obj.SetActive(false);
                     _enemyPool.Add(obj);
                 }
@@ -87,7 +89,7 @@ namespace GameDevHQ.Manager.PoolManagerNS
 
             if (selectedObj == null)
             {
-                selectedObj = Instantiate(_enemyPrefabs[enemyID], _enemyContainer.transform);
+                selectedObj = Instantiate(_enemyList.GetEnemyPrefab(enemyID), _enemyContainer.transform);
                 _enemyPool.Add(selectedObj);
                 //Debug.Log("Created new Enemy Prefab.");
                 return selectedObj;

@@ -6,8 +6,7 @@ using UnityEditor;
 public class WaveMakerEditorWindow : EditorWindow
 {
     public string waveName = "new Wave";
-    public float spawnDelay = 0f;
-    public int numberOfEnemies = 0;
+    public int numberOfEnemies = 1;
     public List<Object> enemies = new List<Object>();
     public Vector2 scrollPos;
 
@@ -22,14 +21,7 @@ public class WaveMakerEditorWindow : EditorWindow
         GUILayout.Label("Configure the Wave.");
         EditorGUILayout.BeginVertical(GUILayout.Width(250));
         waveName = EditorGUILayout.TextField("Name of Wave", waveName);
-        spawnDelay = EditorGUILayout.FloatField("Spawn Delay", spawnDelay);
-        numberOfEnemies = EditorGUILayout.IntField("Number Of Enemies", numberOfEnemies);
-
-        if (numberOfEnemies < 1)
-        {
-            numberOfEnemies = 0;
-            enemies.Clear();
-        }
+        numberOfEnemies = EditorGUILayout.IntSlider("Number Of Enemies", numberOfEnemies, 1, 100);
 
         while (enemies.Count > numberOfEnemies)
         {
@@ -57,7 +49,6 @@ public class WaveMakerEditorWindow : EditorWindow
     public void CreateWave()
     {
         Wave asset = CreateInstance<Wave>();
-        asset.spawnDelay = spawnDelay;
         foreach (var enemy in enemies)
         {
             if (enemy != null)
@@ -77,7 +68,6 @@ public class WaveMakerEditorWindow : EditorWindow
     public void ResetWindow()
     {
         waveName = "new Wave";
-        spawnDelay = 0f;
         numberOfEnemies = 0;
     }
 }
